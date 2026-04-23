@@ -185,7 +185,9 @@
     <div class="modal" id="modal"><span onclick="closeModal()" style="position: fixed; top: 30px; right: 30px; font-size: 30px; cursor: pointer; z-index:2001">✕</span><div class="modal-content" id="modal-content"></div></div>
 
     <script>
-        const API = 'xxxxxxxxxxxxxxx';
+        
+        const _0x5a21 = "aHR0cHM6Ly9zY3JpcHQuZ29vZ2xlLmNvbS9tYWNyb3Mvcy9BS2Z5Y2J4bFZQb0tsc2pzWEJXOUdINXRwc1V1Q3hEOERuYlp5elhzdVA4UzdZMnVTQ0RUazdLbk95ajhfMkotcnBLSnVUN2ovZXhlYw=="; 
+const API = atob(_0x5a21);
         let products = [], categories = [], token = '';
         let cart = JSON.parse(localStorage.getItem('gth_cart')) || [];
 
@@ -327,35 +329,30 @@
         // Cập nhật hàm kiểm tra đăng nhập
 function checkAuth() {
     const inputToken = document.getElementById('admin-token').value;
-    
-    // Kiểm tra nếu mật khẩu không trống
-    if(inputToken.trim() !== "") {
-        token = inputToken; // Lưu token để dùng cho hàm saveAdmin sau này
-        
-        const btnLogin = document.getElementById('btn-login'); // ID đúng trong HTML của bạn
-        const navAdmin = document.getElementById('nav-admin');
-        const loginOverlay = document.getElementById('login-overlay');
+    if(!inputToken) return alert("Nhập mật khẩu!");
 
-        // Hiển thị nút Admin và ẩn nút Login
-        if (navAdmin) navAdmin.classList.remove('hide');
-        if (btnLogin) btnLogin.classList.add('hide'); 
-        
-        // Đóng bảng đăng nhập
-        if (loginOverlay) loginOverlay.style.display = 'none';
-        
-        // Chuyển sang trang Admin
-        showPage('admin');
-        
-        // Đổ dữ liệu hiện tại vào các ô nhập liệu của Admin
-        const currentTitle = document.getElementById('h-title');
-        const currentDesc = document.getElementById('h-desc');
-        
-        if (currentTitle) document.getElementById('edit-title').value = currentTitle.innerHTML;
-        if (currentDesc) document.getElementById('edit-desc').value = currentDesc.textContent;
-        
-        console.log("Đã xác thực cục bộ. Mật khẩu sẽ được kiểm tra thực tế khi bạn nhấn Lưu.");
-    } else {
-        alert("Vui lòng nhập mật khẩu!");
+    // Thêm một thông báo loading nhỏ
+    console.log("Đang xác thực với Cloud...");
+    
+    // Gửi một yêu cầu giả tới Server để kiểm tra pass trước
+    const payload = { token: inputToken, action: 'verify_token' };
+    
+    try {
+        const res = await fetch(API, { method: 'POST', body: JSON.stringify(payload) });
+        const result = await res.json();
+
+        if (result.status === "success" || result.message !== "Truy cập trái phép!") {
+            token = inputToken;
+            document.getElementById('nav-admin').classList.remove('hide');
+            document.getElementById('btn-login').classList.add('hide');
+            document.getElementById('login-overlay').style.display = 'none';
+            showPage('admin');
+            // Đổ dữ liệu...
+        } else {
+            alert("Mật khẩu không chính xác!");
+        }
+    } catch (e) {
+        alert("Lỗi kết nối server!");
     }
 }
 
