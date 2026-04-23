@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <link rel="icon" type="image/png" href="https://i.postimg.cc/CMk5TvWZ/icon-5x.png">
     <title>GARA TÍ HON — Professional Shop</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Be+Vietnam+Pro:wght@300;400;500;600&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
@@ -45,14 +46,14 @@
         ::-webkit-scrollbar-thumb { background: var(--accent); }
 
         /* ── NAVIGATION ── */
-        nav { position: fixed; top: 0; left: 0; right: 0; z-index: 500; height: var(--nav-h); display: flex; align-items: center; justify-content: space-between; padding: 0 20px; background: rgba(10,10,10,0.8); backdrop-filter: blur(20px); border-bottom: 1px solid var(--border); }
+        nav { position: fixed; top: 0; left: 0; right: 0; z-index: 500; height: var(--nav-h); display: flex; align-items: center; justify-content: space-between; padding: 0 15px; background: rgba(10,10,10,0.8); backdrop-filter: blur(20px); border-bottom: 1px solid var(--border);gap: 10px; }
         .nav-logo { font-family: var(--font-display); font-size: 26px; letter-spacing: 1px; cursor: pointer; }
         .nav-logo span { color: var(--accent); }
-        .nav-links { display: flex; gap: 8px; background: rgba(255,255,255,0.05); padding: 4px; border-radius: 100px; }
-        .nav-link { padding: 6px 16px; border-radius: 100px; font-size: 11px; font-weight: 600; color: var(--gray-light); cursor: pointer; transition: 0.3s; text-transform: uppercase; }
+        .nav-links { display: flex; gap: 8px; background: transparent; padding: 0px; border-radius: 100px;gap: 4px; }
+        .nav-link { padding: 4px 6px;; border-radius: 100px; font-size: 9px; font-weight: 600; color: var(--gray-light); cursor: pointer; transition: 0.3s; text-transform: uppercase; }
         .nav-link.active { background: var(--accent); color: var(--white); }
 
-        .cart-icon { position: relative; font-size: 20px; cursor: pointer; }
+        .cart-icon { position: relative; font-size: 20px; cursor: pointer;margin-left: auto; }
         .cart-count { position: absolute; top: -5px; right: -8px; background: var(--accent); width: 16px; height: 16px; border-radius: 50%; font-size: 9px; display: flex; align-items: center; justify-content: center; font-family: var(--font-mono); font-weight: bold; }
 
         /* ── PAGE ENGINE ── */
@@ -110,7 +111,7 @@
         .btn-shop { background: var(--accent); color: white; padding: 15px 30px; border: none; border-radius: 4px; font-weight: 600; text-transform: uppercase; cursor: pointer; transition: 0.3s; font-family: var(--font-body); letter-spacing: 1px; }
         .btn-shop:hover { background: white; color: black; transform: translateY(-2px); }
 
-        @media (max-width: 1024px) { .product-grid { grid-template-columns: repeat(2, 1fr); } .shop-container { flex-direction: column; } .shop-sidebar { width: 100%; height: auto; position: static; } .modal-content { flex-direction: column; } #cart-drawer { width: 100%; } }
+        @media (max-width: 600px) { .product-grid { grid-template-columns: repeat(2, 1fr); } .shop-container { flex-direction: column; } .shop-sidebar { width: 100%; height: auto; position: static; } .nav-logo img { height: 30px; } .modal-content { flex-direction: column; } #cart-drawer { width: 100%; } }
 
         .video-grid {
     display: grid;
@@ -122,8 +123,20 @@
 .video-grid {
     display: grid;
     grid-template-columns: repeat(4, 1fr);
-    gap: 25px;
-    padding: 20px 0;
+    gap: 20px;
+}
+
+@media (max-width: 1024px) {
+    .video-grid {
+        grid-template-columns: repeat(2, 1fr); /* Máy tính bảng/Mobile dàn 2 cột */
+        gap: 10px;
+    }
+}
+
+@media (max-width: 480px) {
+    .video-grid {
+        gap: 8px; /* Thu hẹp khoảng cách trên màn hình rất nhỏ */
+    }
 }
 
 /* Thùng chứa video - tạo hiệu ứng chiều sâu */
@@ -202,7 +215,9 @@
     </div>
 
     <nav>
-        <div class="nav-logo" onclick="showPage('home')">GARA <span>TÍ</span> HON</div>
+        <div class="nav-logo" onclick="showPage('home')">
+    <img src="https://i.postimg.cc/cCRLRHQ2/icon-copy.png" alt="Gara Tí Hon" style="height: 40px; vertical-align: middle;">
+</div>
         <div class="nav-links">
             <div class="nav-link active" onclick="showPage('home', this)">Home</div>
             <div class="nav-link" onclick="showPage('shop', this)">Shop</div>
