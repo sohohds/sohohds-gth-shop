@@ -217,12 +217,26 @@
 
         /* Toast */
         .toast {
-            position: fixed; bottom: -60px; left: 50%; transform: translateX(-50%);
-            background: var(--accent); color: white; padding: 12px 30px;
-            border-radius: 50px; font-weight: 600; z-index: 9999;
-            transition: 0.5s var(--ease); box-shadow: 0 10px 30px rgba(0,0,0,0.5);
-        }
-        .toast.show { bottom: 30px; }
+    position: fixed;
+    bottom: 30px; /* Vị trí khi hiện lên */
+    left: 50%;
+    /* Đẩy hẳn xuống 200px để giấu triệt để trên mọi loại màn hình */
+    transform: translateX(-50%) translateY(200px); 
+    background: var(--accent);
+    color: white;
+    padding: 12px 25px;
+    border-radius: 50px;
+    z-index: 9999;
+    transition: 0.5s cubic-bezier(0.23, 1, 0.32, 1);
+    opacity: 0;
+    white-space: nowrap;
+}
+
+/* Khi có class .show thì kéo về vị trí cũ */
+.toast.show {
+    transform: translateX(-50%) translateY(0);
+    opacity: 1;
+}
 
         /* Admin Login */
         .admin-overlay {
@@ -234,20 +248,69 @@
 
         /* Responsive Mobile */
         @media (max-width: 992px) {
-            .sidebar {
-                width: 100%; height: auto; position: static; border-right: none;
-                border-bottom: 1px solid var(--border); padding: 15px 5%;
-            }
-            .cat-list { flex-direction: row; overflow-x: auto; padding-bottom: 10px; }
-            .cat-item { white-space: nowrap; }
-            .shop-layout { flex-direction: column; }
-            .hero { padding-top: 40px; text-align: center; justify-content: center; }
-            .hero-content p { margin: 0 auto 30px; }
-            .btn-primary { margin: 0 auto; }
-            .nav-links { display: none; } /* Có thể thay bằng menu burger nếu cần */
-            .search-box { width: 140px; }
-            .search-box:focus-within { width: 160px; }
-        }
+    .hamburger { display: flex; } /* Hiện hamburger trên mobile */
+
+    .nav-links {
+        position: fixed;
+        top: 0;
+        right: -100%; /* Giấu menu sang phải */
+        width: 70%;
+        height: 100vh;
+        background: var(--black);
+        flex-direction: column;
+        padding: 100px 40px;
+        transition: 0.5s var(--ease);
+        z-index: 1000;
+        border-left: 1px solid var(--border);
+        box-shadow: -20px 0 50px rgba(0,0,0,0.8);
+        gap: 20px;
+    }
+
+    .nav-links.open {
+        right: 0; /* Trượt menu ra */
+    }
+
+    .nav-link {
+        font-size: 18px; /* Cho chữ to ra cho dễ bấm */
+        width: 100%;
+        text-align: left;
+        padding: 15px 0;
+        border-bottom: 1px solid var(--border);
+        border-radius: 0;
+    }
+    
+    .nav-link.active {
+        background: none;
+        color: var(--accent);
+    }
+
+    .search-box { width: 120px; }
+    .nav-logo img { height: 30px; }
+}
+
+        /* ── HAMBURGER ICON ── */
+.hamburger {
+    display: none; /* Ẩn trên desktop */
+    flex-direction: column;
+    gap: 5px;
+    z-index: 1001;
+    padding: 10px;
+}
+.hamburger span {
+    display: block;
+    width: 25px;
+    height: 2px;
+    background: var(--white);
+    transition: 0.3s var(--ease);
+}
+
+/* Hiệu ứng khi mở Menu (Biến thành dấu X) */
+.hamburger.open span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
+.hamburger.open span:nth-child(2) { opacity: 0; }
+.hamburger.open span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
+
+/* ── NAV LINKS (DESKTOP) ── */
+.nav-links { display: flex; gap: 8px; }
 
         @media (max-width: 600px) {
             .main-grid { grid-template-columns: repeat(2, 1fr); }
@@ -271,26 +334,35 @@
 
     <header>
         <nav>
-            <div class="nav-logo" onclick="showPage('home')">
-                <img src="https://i.postimg.cc/cCRLRHQ2/icon-copy.png" alt="Gara Tí Hon">
-            </div>
-            <div class="nav-links">
-                <button class="nav-link active" onclick="showPage('home', this)">Trang chủ</button>
-                <button class="nav-link" onclick="showPage('shop', this)">Cửa hàng</button>
-                <button class="nav-link" onclick="showPage('videos-page', this)">Videos</button>
-                <button class="nav-link" onclick="openLogin()" id="btn-login" style="color: var(--accent);">Admin</button>
-                <button class="nav-link hide" id="nav-admin" onclick="showPage('admin', this)">Cài đặt</button>
-            </div>
-            <div class="nav-right">
-                <div class="search-box">
-                    <i>🔍</i>
-                    <input type="text" id="global-search" placeholder="Tìm mẫu xe..." oninput="handleSearch()">
-                </div>
-                <button class="cart-trigger" onclick="toggleCart()">
-                    🛒<span class="cart-badge" id="cart-count">0</span>
-                </button>
-            </div>
-        </nav>
+    <div class="nav-logo" onclick="showPage('home')">
+        <img src="https://i.postimg.cc/cCRLRHQ2/icon-copy.png" alt="Gara Tí Hon">
+    </div>
+
+    <div class="search-box">
+        <i>🔍</i>
+        <input type="text" id="global-search" placeholder="Tìm mẫu xe..." oninput="handleSearch()">
+    </div>
+
+    <div class="nav-right">
+        <button class="cart-trigger" onclick="toggleCart()">
+            🛒<span class="cart-badge" id="cart-count">0</span>
+        </button>
+
+        <button class="hamburger" id="hamburger" onclick="toggleMenu()">
+            <span></span>
+            <span></span>
+            <span></span>
+        </button>
+    </div>
+
+    <div class="nav-links" id="nav-links">
+        <button class="nav-link active" onclick="navTo('home', this)">Trang chủ</button>
+        <button class="nav-link" onclick="navTo('shop', this)">Cửa hàng</button>
+        <button class="nav-link" onclick="navTo('videos-page', this)">Videos</button>
+        <button class="nav-link" onclick="navToLogin()" id="btn-login" style="color: var(--accent);">Admin</button>
+        <button class="nav-link hide" id="nav-admin" onclick="navTo('admin', this)">Cài đặt</button>
+    </div>
+</nav>
     </header>
 
     <main>
@@ -634,6 +706,30 @@
 
         function closeModal() { document.getElementById('modal').style.display = 'none'; document.body.style.overflow = 'auto'; }
         function saveCart() { localStorage.setItem('gth_cart', JSON.stringify(cart)); }
+
+        function toggleMenu() {
+    const navLinks = document.getElementById('nav-links');
+    const hamburger = document.getElementById('hamburger');
+    
+    navLinks.classList.toggle('open');
+    hamburger.classList.toggle('open');
+}
+
+// Hàm bổ trợ để khi bấm vào link thì tự đóng menu luôn
+function navTo(pageId, el) {
+    showPage(pageId, el);
+    // Nếu đang ở mobile thì đóng menu sau khi chọn trang
+    if (window.innerWidth <= 992) {
+        toggleMenu();
+    }
+}
+
+function navToLogin() {
+    openLogin();
+    if (window.innerWidth <= 992) {
+        toggleMenu();
+    }
+}
 
         init();
     </script>
