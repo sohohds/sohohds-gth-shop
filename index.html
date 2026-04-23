@@ -1,0 +1,415 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title>GARA TÍ HON — Professional Shop</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Be+Vietnam+Pro:wght@300;400;500;600&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@500;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --black: #0a0a0a; --white: #f5f2ed; --accent: #c8522a;
+            --gray: #141414; --gray-light: #888; --border: rgba(245,242,237,0.08);
+            --font-display: 'Oswald', sans-serif; --font-body: 'Be Vietnam Pro', sans-serif;
+            --font-mono: 'Space Mono', monospace;
+            --nav-h: 70px; --ease: cubic-bezier(0.23, 1, 0.32, 1);
+        }
+
+        body { background: var(--black); color: var(--white); font-family: var(--font-body); margin: 0; overflow-x: hidden; -webkit-font-smoothing: antialiased; }
+        .hide { display: none !important; }
+        
+        /* ── LOADING SCREEN (DYNAMICS) ── */
+        .loader { 
+            position: fixed; inset: 0; background: var(--black); z-index: 5000; 
+            display: flex; align-items: center; justify-content: center; 
+            transition: 0.3s var(--ease); pointer-events: none; 
+        }
+        .loader-content { text-align: center; }
+        
+        /* Icon loading động */
+        .loader-icon {
+            width: 40px; height: 40px;
+            border: 2px solid rgba(200, 82, 42, 0.1);
+            border-top-color: var(--accent);
+            border-radius: 50%;
+            margin: 0 auto 20px;
+            animation: spin 0.8s linear infinite;
+        }
+        @keyframes spin { to { transform: rotate(360deg); } }
+
+        .loader-content h1 { font-family: var(--font-display); letter-spacing: 5px; margin: 0; font-size: 32px; }
+        .loader-content p { font-size: 12px; opacity: 0.6; margin-top: 10px; font-weight: 300; letter-spacing: 1px; }
+
+        ::-webkit-scrollbar { width: 3px; height: 3px; }
+        ::-webkit-scrollbar-thumb { background: var(--accent); }
+
+        /* ── NAVIGATION ── */
+        nav { position: fixed; top: 0; left: 0; right: 0; z-index: 500; height: var(--nav-h); display: flex; align-items: center; justify-content: space-between; padding: 0 20px; background: rgba(10,10,10,0.8); backdrop-filter: blur(20px); border-bottom: 1px solid var(--border); }
+        .nav-logo { font-family: var(--font-display); font-size: 26px; letter-spacing: 1px; cursor: pointer; }
+        .nav-logo span { color: var(--accent); }
+        .nav-links { display: flex; gap: 8px; background: rgba(255,255,255,0.05); padding: 4px; border-radius: 100px; }
+        .nav-link { padding: 6px 16px; border-radius: 100px; font-size: 11px; font-weight: 600; color: var(--gray-light); cursor: pointer; transition: 0.3s; text-transform: uppercase; }
+        .nav-link.active { background: var(--accent); color: var(--white); }
+
+        .cart-icon { position: relative; font-size: 20px; cursor: pointer; }
+        .cart-count { position: absolute; top: -5px; right: -8px; background: var(--accent); width: 16px; height: 16px; border-radius: 50%; font-size: 9px; display: flex; align-items: center; justify-content: center; font-family: var(--font-mono); font-weight: bold; }
+
+        /* ── PAGE ENGINE ── */
+        .page { display: none; padding-top: var(--nav-h); min-height: 100vh; animation: fadeIn 0.4s var(--ease); }
+        .page.active { display: block; }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+        /* ── SHOP LAYOUT ── */
+        .shop-container { display: flex; min-height: 100vh; }
+        .shop-sidebar { width: 280px; padding: 40px 20px; border-right: 1px solid var(--border); position: sticky; top: var(--nav-h); height: calc(100vh - var(--nav-h)); }
+        .shop-sidebar h3 {
+    font-family: 'Oswald', sans-serif !important;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+        .cat-btn { display: block; width: 100%; text-align: left; padding: 12px; background: none; border: 1px solid transparent; color: var(--gray-light); cursor: pointer; border-radius: 4px; margin-bottom: 5px; font-size: 12px; text-transform: uppercase; font-family: var(--font-body); }
+        .cat-btn.active { color: var(--accent); border-color: var(--accent); background: rgba(200, 82, 42, 0.05); }
+
+        .product-grid { flex: 1; display: grid; grid-template-columns: repeat(4, 1fr); gap: 1px; background: var(--border); }
+        .product-card { background: var(--black); padding: 25px; cursor: pointer; transition: 0.3s; }
+        .product-card:hover { background: var(--gray); }
+        .p-img { aspect-ratio: 1; background: #111; border-radius: 4px; overflow: hidden; display: flex; align-items: center; justify-content: center; margin-bottom: 15px; }
+        .p-img img { width: 100%; height: 100%; object-fit: cover; }
+
+        /* ── GALLERY MODAL ── */
+        .modal { position: fixed; inset: 0; z-index: 2000; background: rgba(0,0,0,0.98); display: none; padding: 40px 20px; overflow-y: auto; }
+        .modal-content { max-width: 1100px; margin: 0 auto; display: flex; gap: 50px; }
+        .main-img-display { width: 100%; aspect-ratio: 1; background: #111; border-radius: 12px; margin-bottom: 15px; overflow: hidden; display: flex; align-items: center; justify-content: center; }
+        .main-img-display img { width: 100%; height: 100%; object-fit: cover; transition: 0.3s; }
+        .thumb-bar { display: flex; gap: 10px; overflow-x: auto; padding-bottom: 10px; }
+        .thumb-item { width: 70px; height: 70px; flex-shrink: 0; border-radius: 6px; cursor: pointer; border: 2px solid transparent; opacity: 0.4; overflow: hidden; transition: 0.3s; }
+        .thumb-item.active { border-color: var(--accent); opacity: 1; }
+        .thumb-item img { width: 100%; height: 100%; object-fit: cover; }
+        .p-extra {
+    margin-top: 20px;
+    padding: 15px;
+    background: rgba(255, 255, 255, 0.05); /* Tạo một khung nền mờ nhẹ */
+    border-left: 3px solid var(--accent); /* Nhấn nhá bằng một đường kẻ màu cam Gara */
+    color: #ffffff; /* Màu chữ trắng tinh (sáng hơn description) */
+    font-size: 13px;
+    line-height: 1.6;
+    border-radius: 4px;
+}
+
+        /* ── CART DRAWER ── */
+        #cart-drawer { position: fixed; top: 0; right: 0; bottom: 0; width: 400px; max-width: 100%; background: var(--gray); z-index: 3000; transform: translateX(100%); transition: 0.4s var(--ease); display: flex; flex-direction: column; border-left: 1px solid var(--border); box-shadow: -10px 0 30px rgba(0,0,0,0.5); }
+        #cart-drawer.open { transform: translateX(0); }
+        .cart-header { padding: 25px; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; }
+        .cart-items-list { flex: 1; overflow-y: auto; padding: 20px; }
+        .cart-item { display: flex; gap: 15px; margin-bottom: 20px; align-items: center; background: rgba(255,255,255,0.02); padding: 10px; border-radius: 8px; }
+        .cart-item img { width: 60px; height: 60px; object-fit: cover; border-radius: 4px; }
+        .qty-btn { cursor: pointer; background: var(--black); width: 25px; height: 25px; display: flex; align-items: center; justify-content: center; border-radius: 4px; border: 1px solid var(--border); font-size: 14px; font-weight: bold; }
+
+        .btn-shop { background: var(--accent); color: white; padding: 15px 30px; border: none; border-radius: 4px; font-weight: 600; text-transform: uppercase; cursor: pointer; transition: 0.3s; font-family: var(--font-body); letter-spacing: 1px; }
+        .btn-shop:hover { background: white; color: black; transform: translateY(-2px); }
+
+        @media (max-width: 1024px) { .product-grid { grid-template-columns: repeat(2, 1fr); } .shop-container { flex-direction: column; } .shop-sidebar { width: 100%; height: auto; position: static; } .modal-content { flex-direction: column; } #cart-drawer { width: 100%; } }
+    </style>
+</head>
+<body>
+
+    <div class="loader" id="loader">
+        <div class="loader-content">
+            <div class="loader-icon"></div>
+            <h1>GARA TI HON</h1>
+            <p>Đợi xíu nhé, mình tới ngay đây...</p>
+        </div>
+    </div>
+
+    <div id="cart-drawer">
+        <div class="cart-header"><h2 style="font-family: var(--font-display);">GIỎ HÀNG</h2><span onclick="toggleCart()" style="cursor:pointer; font-size: 24px;">✕</span></div>
+        <div id="cart-items-list" class="cart-items-list"></div>
+        <div style="padding: 25px; background: var(--black);">
+            <div style="display: flex; justify-content: space-between; margin-bottom: 20px;"><span>TỔNG CỘNG:</span><span id="cart-total-price" style="color:var(--accent); font-weight: bold;">0₫</span></div>
+            <button class="btn-shop" style="width:100%" onclick="checkout()">ĐẶT HÀNG</button>
+        </div>
+    </div>
+
+    <div id="login-overlay" class="loader" style="display:none; pointer-events:all; background: rgba(0,0,0,0.9);">
+        <div style="text-align:center;">
+            <h2 style="font-family: var(--font-display); margin-bottom: 20px;">ADMIN LOGIN</h2>
+            <input type="password" id="admin-token" placeholder="Mật khẩu..." style="padding:12px; background:black; border:1px solid var(--border); color:white; border-radius:4px; text-align:center;">
+            <br><br><button class="btn-shop" onclick="checkAuth()">Xác thực</button>
+            <p onclick="document.getElementById('login-overlay').style.display='none'" style="margin-top:15px; cursor:pointer; opacity:0.5;">Đóng</p>
+        </div>
+    </div>
+
+    <nav>
+        <div class="nav-logo" onclick="showPage('home')">GARA <span>TÍ</span> HON</div>
+        <div class="nav-links">
+            <div class="nav-link active" onclick="showPage('home', this)">Home</div>
+            <div class="nav-link" onclick="showPage('shop', this)">Shop</div>
+            <div class="nav-link" onclick="openLogin()" id="btn-login" style="color: var(--accent);">Login</div>
+            <div class="nav-link hide" id="nav-admin" onclick="showPage('admin', this)">Admin</div>
+        </div>
+        <div class="cart-icon" onclick="toggleCart()">🛒<span class="cart-count" id="cart-count">0</span></div>
+    </nav>
+
+    <div id="home" class="page active">
+        <section style="display: flex; align-items: center; padding: 80px 5%; gap: 50px; flex-wrap: wrap;">
+            <div style="flex: 1; min-width: 300px;">
+                <h1 id="h-title" style="font-family: var(--font-display); font-size: clamp(50px, 8vw, 80px); line-height: 0.9; margin-bottom: 20px;">...</h1>
+                <p id="h-desc" style="color: var(--gray-light); font-size: 15px; text-align: justify; margin-bottom: 40px; line-height: 1.8;">Đang kết nối...</p>
+                <button class="btn-shop" onclick="showPage('shop')">Vào Cửa Hàng</button>
+            </div>
+            <div style="flex: 1; display: grid; grid-template-columns: 1fr 1fr; gap: 15px; min-width: 300px;" id="h-imgs"></div>
+        </section>
+    </div>
+
+    <div id="shop" class="page">
+        <div class="shop-container">
+            <aside class="shop-sidebar">
+                <h3 style="font-family: var(--font-display); margin-bottom: 20px;">DANH MỤC</h3>
+                <div id="cat-list"></div>
+            </aside>
+            <div class="product-grid" id="prod-grid"></div>
+        </div>
+    </div>
+
+    <div id="admin" class="page" style="padding: 100px 20px;">
+        <div style="max-width: 600px; margin: 0 auto; background: var(--gray); padding: 40px; border-radius: 8px;">
+            <h2 style="font-family: var(--font-display); margin-bottom: 30px;">CÀI ĐẶT TRANG CHỦ</h2>
+            <input type="text" id="edit-title" placeholder="Tiêu đề...">
+            <textarea id="edit-desc" rows="8" placeholder="Mô tả..." style="width:100%; background:black; color:white; border:1px solid var(--border); padding:10px; margin-top:10px;"></textarea>
+            <br><br><button class="btn-shop" style="width:100%" onclick="saveAdmin()">Lưu Lên Cloud</button>
+        </div>
+    </div>
+
+    <div class="modal" id="modal"><span onclick="closeModal()" style="position: fixed; top: 30px; right: 30px; font-size: 30px; cursor: pointer; z-index:2001">✕</span><div class="modal-content" id="modal-content"></div></div>
+
+    <script>
+        // Đây là chuỗi mã hóa Sơn vừa copy ở Bước 1
+const _0x4f2a = "aHR0cHM6Ly9zY3JpcHQuZ29vZ2xlLmNvbS9tYWNyb3Mvcy9BS2Z5Y2J4bFZQb0tsc2pzWEJXOUdINXRwc1V1Q3hEOERuYlp5elhzdVA4UzdZMnVTQ0RUazdLbk95ajhfMkotcnBLSnVUN2ovZXhlYw=="; 
+
+// Giải mã link API
+const API = atob(_0x4f2a); 
+
+// Kiểm tra trong Console (Chỉ dùng khi test, sau đó nên xóa dòng này)
+console.log("API đã sẵn sàng:", API);
+
+        let products = [], categories = [], token = '';
+        let cart = JSON.parse(localStorage.getItem('gth_cart')) || [];
+
+        // Ẩn loader nhanh (0.3s transition)
+        function hideLoader() {
+            const loader = document.getElementById('loader');
+            loader.style.opacity = '0';
+            setTimeout(() => { loader.style.display = 'none'; }, 300);
+        }
+
+        async function init() {
+            renderCart();
+            try {
+                const res = await fetch(`${API}?action=public_data`);
+                const data = await res.json();
+                
+                if(data.settings) {
+                    document.getElementById('h-title').innerHTML = data.settings.home_title || "GARA TÍ HON";
+                    document.getElementById('h-desc').innerHTML = data.settings.home_desc || "";
+                    if(data.settings.home_imgs) {
+                        const imgs = data.settings.home_imgs.split(',');
+                        document.getElementById('h-imgs').innerHTML = imgs.map(link => `<div class="p-img"><img src="${link.trim()}" onerror="this.src='🏎️'"></div>`).join('');
+                    }
+                }
+                products = data.products || [];
+                categories = data.categories || [];
+                renderShop();
+                hideLoader(); // Ẩn ngay khi có dữ liệu
+            } catch(e) { 
+                console.error(e); 
+                hideLoader(); 
+            }
+        }
+
+        function renderShop() {
+            document.getElementById('cat-list').innerHTML = `<button class="cat-btn active" onclick="filterCat('all', this)">Tất cả</button>` + 
+                categories.map(c => `<button class="cat-btn" onclick="filterCat('${c.key}', this)">${c.name}</button>`).join('');
+            renderProducts();
+        }
+
+        function renderProducts(cat = 'all') {
+            const source = cat === 'all' ? products : products.filter(p => p.cat === cat);
+            document.getElementById('prod-grid').innerHTML = source.map(p => `
+                <div class="product-card" onclick="openDetail('${p.id}')">
+                    <div class="p-img"><img src="${p.images ? p.images[0] : '🏎️'}" onerror="this.src='🏎️'"></div>
+                    <div class="p-name">${p.name}</div>
+                    <div class="p-price">${Number(p.price).toLocaleString()}₫</div>
+                </div>
+            `).join('');
+        }
+
+        function openDetail(id) {
+    const p = products.find(x => x.id == id);
+    const modal = document.getElementById('modal');
+    const imgs = (p.images && p.images.length) ? p.images : ["🏎️"];
+    
+    document.getElementById('modal-content').innerHTML = `
+        <div style="flex: 1.2; width: 100%;">
+            <div class="modal-slider-container">
+                <div class="main-img-display"><img id="main-view" src="${imgs[0]}"></div>
+                <div class="thumb-bar">
+                    ${imgs.map((img, index) => `<div class="thumb-item ${index === 0 ? 'active' : ''}" onclick="changeImg(this, '${img}')"><img src="${img}"></div>`).join('')}
+                </div>
+            </div>
+        </div>
+        
+        <div style="flex: 1;">
+            <div style="font-size: 10px; color: var(--accent); letter-spacing: 2px; margin-bottom: 10px; font-family: var(--font-mono)">1:64 SCALE ARTISAN</div>
+            <h1 style="font-family: var(--font-display); font-size: 50px; line-height: 1; margin-bottom: 20px;">${p.name}</h1>
+            <div style="font-family: var(--font-mono); color: var(--accent); font-size: 26px; margin-bottom: 20px; font-weight: bold;">${Number(p.price).toLocaleString()}₫</div>
+            
+            <p style="color: var(--white); font-size: 14px; line-height: 1.8; text-align:justify; opacity: 0.7;">${p.desc}</p>
+            
+            ${p.extra ? `<div class="p-extra">${p.extra}</div>` : ''}
+            
+            <div style="display: flex; gap: 15px; margin-top: 30px;">
+                <button class="btn-shop" style="flex: 1;" onclick="addToCart('${p.id}')">THÊM VÀO GIỎ HÀNG</button>
+            </div>
+        </div>
+    `;
+    
+    modal.style.display = 'block';
+    document.body.style.overflow = 'hidden';
+}
+
+        function changeImg(el, src) {
+            document.getElementById('main-view').src = src;
+            document.querySelectorAll('.thumb-item').forEach(t => t.classList.remove('active'));
+            el.classList.add('active');
+        }
+
+        function toggleCart() { document.getElementById('cart-drawer').classList.toggle('open'); }
+
+        function addToCart(id) {
+            const p = products.find(x => x.id == id);
+            const exists = cart.find(x => x.id == id);
+            if(exists) exists.qty++; else cart.push({ ...p, qty: 1 });
+            saveCart(); renderCart(); closeModal(); toggleCart();
+        }
+
+        function updateQty(id, delta) {
+            const item = cart.find(x => x.id == id);
+            if(item) { item.qty += delta; if(item.qty <= 0) cart = cart.filter(x => x.id != id); }
+            saveCart(); renderCart();
+        }
+
+        function saveCart() { localStorage.setItem('gth_cart', JSON.stringify(cart)); }
+
+        function renderCart() {
+            const list = document.getElementById('cart-items-list');
+            let total = 0, count = 0;
+            list.innerHTML = cart.length === 0 ? '<p style="text-align:center; opacity:0.3; margin-top:50px;">Giỏ hàng trống.</p>' : 
+            cart.map(item => {
+                total += item.price * item.qty; count += item.qty;
+                return `<div class="cart-item"><img src="${item.images[0]}" onerror="this.src='🏎️'">
+                    <div style="flex:1"><div style="font-size:13px; font-weight:600;">${item.name}</div><div style="color:var(--accent); font-size:12px;">${Number(item.price).toLocaleString()}₫</div>
+                    <div style="display:flex; align-items:center; gap:10px; margin-top:10px;"><span class="qty-btn" onclick="updateQty('${item.id}', -1)">-</span><span>${item.qty}</span><span class="qty-btn" onclick="updateQty('${item.id}', 1)">+</span></div></div></div>`;
+            }).join('');
+            document.getElementById('cart-total-price').textContent = total.toLocaleString() + '₫';
+            document.getElementById('cart-count').textContent = count;
+        }
+
+        async function checkout() {
+            if(!cart.length) return;
+            let orderDetails = "📦 ĐƠN HÀNG GARA TÍ HON\n--------------------------\n";
+            cart.forEach((item, i) => {
+                orderDetails += `${i + 1}. ${item.name} (x${item.qty}) - ${Number(item.price * item.qty).toLocaleString()}₫\n`;
+            });
+            orderDetails += `--------------------------\n💰 TỔNG CỘNG: ${document.getElementById('cart-total-price').textContent}\n\n🏠 Họ tên:\n📞 SĐT:\n📍 Địa chỉ:`;
+            
+            try {
+                await navigator.clipboard.writeText(orderDetails);
+                alert("✅ Đã sao chép đơn hàng! Hãy dán vào Zalo để gửi nhé.");
+                window.open(`https://zalo.me/xxxx`); // Thay số Zalo của bạn
+            } catch (err) { alert("Lỗi sao chép!"); }
+        }
+
+        function openLogin() { document.getElementById('login-overlay').style.display = 'flex'; }
+        // Cập nhật hàm kiểm tra đăng nhập
+function checkAuth() {
+    const inputToken = document.getElementById('admin-token').value;
+    
+    // Kiểm tra nếu mật khẩu không trống
+    if(inputToken.trim() !== "") {
+        token = inputToken; // Lưu token để dùng cho hàm saveAdmin sau này
+        
+        const btnLogin = document.getElementById('btn-login'); // ID đúng trong HTML của bạn
+        const navAdmin = document.getElementById('nav-admin');
+        const loginOverlay = document.getElementById('login-overlay');
+
+        // Hiển thị nút Admin và ẩn nút Login
+        if (navAdmin) navAdmin.classList.remove('hide');
+        if (btnLogin) btnLogin.classList.add('hide'); 
+        
+        // Đóng bảng đăng nhập
+        if (loginOverlay) loginOverlay.style.display = 'none';
+        
+        // Chuyển sang trang Admin
+        showPage('admin');
+        
+        // Đổ dữ liệu hiện tại vào các ô nhập liệu của Admin
+        const currentTitle = document.getElementById('h-title');
+        const currentDesc = document.getElementById('h-desc');
+        
+        if (currentTitle) document.getElementById('edit-title').value = currentTitle.innerHTML;
+        if (currentDesc) document.getElementById('edit-desc').value = currentDesc.textContent;
+        
+        console.log("Đã xác thực cục bộ. Mật khẩu sẽ được kiểm tra thực tế khi bạn nhấn Lưu.");
+    } else {
+        alert("Vui lòng nhập mật khẩu!");
+    }
+}
+
+        // Cập nhật hàm lưu (Đảm bảo token luôn được gửi kèm)
+async function saveAdmin() {
+    const payload = { 
+        token: token, // Gửi mật khẩu lên để Backend xác thực
+        action: 'save_home', 
+        title: document.getElementById('edit-title').value, 
+        desc: document.getElementById('edit-desc').value 
+    };
+
+    try {
+        const res = await fetch(API, { 
+            method: 'POST', 
+            body: JSON.stringify(payload) 
+        });
+        const result = await res.json();
+        
+        if(result.status === 'success') { 
+            alert("✅ Xác thực thành công & Đã cập nhật Cloud!"); 
+            location.reload(); 
+        } else {
+            alert("❌ Lỗi bảo mật: " + result.message); 
+        }
+    } catch(e) {
+        alert("❌ Không thể kết nối với hệ thống bảo mật.");
+    }
+}
+
+        function showPage(id, el) {
+            document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+            document.getElementById(id).classList.add('active');
+            if(el) { document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active')); el.classList.add('active'); }
+            window.scrollTo(0,0);
+        }
+
+        function filterCat(key, el) {
+            document.querySelectorAll('.cat-btn').forEach(b => b.classList.remove('active'));
+            el.classList.add('active');
+            renderProducts(key);
+        }
+
+        function closeModal() { document.getElementById('modal').style.display = 'none'; document.body.style.overflow = 'auto'; }
+        
+        init();
+    </script>
+</body>
+</html>
