@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
     <link rel="icon" type="image/png" href="https://i.postimg.cc/CMk5TvWZ/icon-5x.png">
+    <link rel="apple-touch-icon" href="https://i.postimg.cc/CMk5TvWZ/icon-5x.png">
     <title>GARA TÍ HON — Professional Shop</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Be+Vietnam+Pro:wght@300;400;500;600&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
@@ -182,6 +183,33 @@
     pointer-events: none; /* Để vẫn bấm được vào video */
     box-shadow: inset 0 0 100px rgba(0,0,0,0.2);
     border-radius: 16px;
+}
+
+/* Thông báo nhỏ khi thêm vào giỏ */
+.toast {
+    position: fixed;
+    bottom: -50px; /* Ẩn dưới màn hình */
+    left: 50%;
+    transform: translateX(-50%);
+    background: var(--accent);
+    color: white;
+    padding: 12px 25px;
+    border-radius: 50px;
+    font-size: 14px;
+    font-weight: 600;
+    z-index: 9999;
+    transition: 0.4s var(--ease);
+    box-shadow: 0 10px 30px rgba(200, 82, 42, 0.4);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    pointer-events: none;
+    opacity: 0;
+}
+
+.toast.show {
+    bottom: 30px; /* Hiện lên */
+    opacity: 1;
 }
 
     </style>
@@ -404,14 +432,15 @@ function renderVideos() {
             <div style="font-size: 10px; color: var(--accent); letter-spacing: 2px; margin-bottom: 10px; font-family: var(--font-mono)">1:64 SCALE ARTISAN</div>
             <h1 style="font-family: var(--font-display); font-size: 50px; line-height: 1; margin-bottom: 20px;">${p.name}</h1>
             <div style="font-family: var(--font-mono); color: var(--accent); font-size: 26px; margin-bottom: 20px; font-weight: bold;">${Number(p.price).toLocaleString()}₫</div>
+                    <div style="display: flex; gap: 15px; margin-top: 30px;">
+                <button class="btn-shop" style="flex: 1;" onclick="addToCart('${p.id}')">THÊM VÀO GIỎ HÀNG</button>
+            </div>
             
             <p style="color: var(--white); font-size: 14px; line-height: 1.8; text-align:justify; opacity: 0.7;">${p.desc}</p>
             
             ${p.extra ? `<div class="p-extra">${p.extra}</div>` : ''}
             
-            <div style="display: flex; gap: 15px; margin-top: 30px;">
-                <button class="btn-shop" style="flex: 1;" onclick="addToCart('${p.id}')">THÊM VÀO GIỎ HÀNG</button>
-            </div>
+            
         </div>
     `;
     
@@ -427,12 +456,39 @@ function renderVideos() {
 
         function toggleCart() { document.getElementById('cart-drawer').classList.toggle('open'); }
 
-        function addToCart(id) {
-            const p = products.find(x => x.id == id);
-            const exists = cart.find(x => x.id == id);
-            if(exists) exists.qty++; else cart.push({ ...p, qty: 1 });
-            saveCart(); renderCart(); closeModal(); toggleCart();
-        }
+        // Tạo âm thanh thông báo nhỏ
+const addSound = new Audio('https://assets.mixkit.co/active_storage/sfx/2568/2568-preview.mp3');
+
+function addToCart(id) {
+    const p = products.find(x => x.id == id);
+    const exists = cart.find(x => x.id == id);
+    
+    if(exists) exists.qty++; 
+    else cart.push({ ...p, qty: 1 });
+    
+    saveCart();
+    renderCart();
+    closeModal();
+    
+    // THAY THẾ toggleCart() BẰNG THÔNG BÁO
+    showNotification();
+}
+
+function showNotification() {
+    const toast = document.getElementById('toast');
+    
+    // Chạy âm thanh
+    addSound.currentTime = 0; // Reset âm thanh nếu bấm liên tục
+    addSound.play().catch(e => console.log("Chờ tương tác để phát nhạc"));
+
+    // Hiển thị toast
+    toast.classList.add('show');
+    
+    // Tự động ẩn sau 2 giây
+    setTimeout(() => {
+        toast.classList.remove('show');
+    }, 2000);
+}
 
         function updateQty(id, delta) {
             const item = cart.find(x => x.id == id);
@@ -555,5 +611,9 @@ async function saveAdmin() {
         
         init();
     </script>
+
+    <div id="toast" class="toast">
+    <span>🏎️</span> Đã thêm vào giỏ hàng
+</div>
 </body>
 </html>
