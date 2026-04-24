@@ -49,16 +49,90 @@ input, textarea { font-family: var(--font-b); }
   transition: opacity 0.4s var(--ease);
 }
 .loader.hidden { opacity: 0; pointer-events: none; }
-.loader-icon {
+/*.loader-icon {
   width: 44px; height: 44px; margin: 0 auto 20px;
   border: 2px solid rgba(200,82,42,0.15);
   border-top-color: var(--accent); border-radius: 50%;
   animation: spin 0.8s linear infinite;
-}
-@keyframes spin { to { transform: rotate(360deg); } }
+}*/
+/*@keyframes spin { to { transform: rotate(360deg); } }*/
 .loader-content { text-align: center; }
 .loader-content h1 { font-family: var(--font-d); font-size: 30px; letter-spacing: 5px; margin-bottom: 8px; }
 .loader-content p  { color: var(--gray-light); font-size: 13px; }
+
+.loader-icon {
+  width: 24px;
+  height: 80px;
+  display: block;
+  margin: 35px auto 0;
+  border: 1px solid #FFF;
+  border-radius: 0 0 50px 50px;
+  position: relative;
+  box-shadow: 0px 0px #FF3D00 inset;
+  background-image: linear-gradient(#D96030 100px, transparent 0);
+  background-position: 0px 0px;
+  background-size: 22px 80px;
+  background-repeat: no-repeat;
+  box-sizing: border-box;
+  animation: animloader 6s linear infinite;
+}
+.loader-icon::after {
+  content: '';  
+  box-sizing: border-box;
+  top: -6px;
+  left: 50%;
+  transform: translateX(-50%);
+  position: absolute;
+  border: 1px solid #FFF;
+  border-radius: 50%;
+  width: 28px;
+  height: 6px;
+}
+.loader-icon::before {
+  content: '';  
+  box-sizing: border-box;
+  left: 0;
+  bottom: -4px;
+  border-radius: 50%;
+  position: absolute;
+  width: 6px;
+  height: 6px;
+  animation: animloader1 6s linear infinite;
+}
+
+@keyframes animloader {
+  0% {
+    background-position: 0px 80px;
+  }
+  100% {
+    background-position: 0px 0px;
+  }
+}
+
+@keyframes animloader1 {
+  0% {
+    box-shadow: 4px -10px rgba(255, 255, 255, 0), 6px 0px rgba(255, 255, 255, 0), 8px -15px rgba(255, 255, 255, 0), 12px 0px rgba(255, 255, 255, 0);
+  }
+  20% {
+    box-shadow: 4px -20px rgba(255, 255, 255, 0), 8px -10px rgba(255, 255, 255, 0), 10px -30px rgba(255, 255, 255, 0.5), 15px -5px rgba(255, 255, 255, 0);
+  }
+  40% {
+    box-shadow: 2px -40px rgba(255, 255, 255, 0.5), 8px -30px rgba(255, 255, 255, 0.4), 8px -60px rgba(255, 255, 255, 0.5), 12px -15px rgba(255, 255, 255, 0.5);
+  }
+  60% {
+    box-shadow: 4px -60px rgba(255, 255, 255, 0.5), 6px -50px rgba(255, 255, 255, 0.4), 10px -90px rgba(255, 255, 255, 0.5), 15px -25px rgba(255, 255, 255, 0.5);
+  }
+  80% {
+    box-shadow: 2px -80px rgba(255, 255, 255, 0.5), 4px -70px rgba(255, 255, 255, 0.4), 8px -120px rgba(255, 255, 255, 0), 12px -35px rgba(255, 255, 255, 0.5);
+  }
+  100% {
+    box-shadow: 4px -100px rgba(255, 255, 255, 0), 8px -90px rgba(255, 255, 255, 0), 10px -120px rgba(255, 255, 255, 0), 15px -45px rgba(255, 255, 255, 0);
+  }
+}
+
+
+  
+
 
 /* ══════════════════════════════════════
    NAVIGATION
@@ -502,8 +576,11 @@ textarea.admin-input { resize: vertical; line-height: 1.7; }
 <div class="loader" id="loader">
   <div class="loader-content">
     <div class="loader-icon"></div>
-    <h1>GARA TÍ HON</h1>
-    <p>Đợi xíu nhé, mình tới ngay đây...</p>
+    <br>
+    <br>
+    <h1>GARA TÍ HON LAB</h1>
+    <p>Đợi xíu nhé, mình cook xong ngay đây...</p>
+
   </div>
 </div>
 
@@ -550,7 +627,7 @@ textarea.admin-input { resize: vertical; line-height: 1.7; }
     <button class="nav-link active" data-page="home"        onclick="navTo('home',this)">Home</button>
     <button class="nav-link"        data-page="shop"        onclick="navTo('shop',this)">Shop</button>
     <button class="nav-link"        data-page="videos-page" onclick="navTo('videos-page',this)">Videos</button>
-    <button class="nav-link accent" id="btn-login"          onclick="openLogin()">Login</button>
+    <!-- <button class="nav-link accent" id="btn-login"          onclick="openLogin()">Login</button> -->
     <button class="nav-link hide"   id="nav-admin"          data-page="admin" onclick="navTo('admin',this)">Admin</button>
   </div>
 
