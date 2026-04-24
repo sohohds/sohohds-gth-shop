@@ -480,6 +480,20 @@ textarea.admin-input { resize: vertical; line-height: 1.7; }
   .video-grid   { grid-template-columns: 1fr 1fr; }
   .home-title   { font-size: 40px; }
 }
+
+/* Style cho nút hết hàng */
+.btn-out-stock {
+  background: #444 !important; /* Màu xám tối */
+  color: #888 !important;    /* Chữ xám nhạt */
+  cursor: not-allowed !important;
+  transform: none !important;
+  box-shadow: none !important;
+}
+.price-out-stock {
+  color: #ff4d4d !important; /* Chữ Hết hàng màu đỏ nhạt hoặc giữ accent tùy Sơn */
+  font-family: var(--font-b) !important;
+  font-size: 13px !important;
+}
 </style>
 </head>
 <body>
@@ -635,9 +649,9 @@ textarea.admin-input { resize: vertical; line-height: 1.7; }
 /* ═══════════════════════════════════════
    CONFIG — thay ZALO_NUMBER bằng số thật
 ═══════════════════════════════════════ */
-const _0x4f2a = "aHR0cHM6Ly9zY3JpcHQuZ29vZ2xlLmNvbS9tYWNyb3Mvcy9BS2Z5Y2J3UFl1UVVWak5VY2UySVFXM3EyckdOalBNNEVSQ2VBY3NMbGoyTzZiNVRvY3d6bGJDaV9rRzJHWDFUaG5vRWYzRmcvZXhlYw==";
+const _0x4f2a = "aHR0cHM6Ly9zY3JpcHQuZ29vZ2xlLmNvbS9tYWNyb3Mvcy9BS2Z5Y2J6UGFpYVVRM2hGYlpIYU1PZXdxN2RUVkVKYjZoQy1pcWpFUUhYZzVHZ19nVTE3bHFqNm11RVl3X2tycWZ4dWhfZmovZXhlYw==";
 const API          = atob(_0x4f2a);
-const ZALO_NUMBER  = "0xxxxxxxxx"; // ← đổi số Zalo ở đây
+const ZALO_NUMBER  = "0382949505"; // ← đổi số Zalo ở đây
 
 /* ═══════════════════════════════════════
    STATE
@@ -783,7 +797,11 @@ function renderProductList(list, query) {
       <div class="product-card" onclick="openDetail('${p.id}')">
         <div class="p-img">${thumb}</div>
         <div class="p-name">${p.name}</div>
-        <div class="p-price">${Number(p.price).toLocaleString()}₫</div>
+        <div class="p-price">
+  ${p.status === 'Out Stock' 
+    ? '<span class="price-out-stock">Hết hàng</span>' 
+    : Number(p.price).toLocaleString() + '₫'}
+</div>
       </div>`;
   }).join('');
 }
@@ -845,10 +863,17 @@ function openDetail(id) {
     <div class="modal-right">
       <div class="modal-badge">1:64 SCALE ARTISAN</div>
       <h1 class="modal-name">${p.name}</h1>
-      <div class="modal-price">${Number(p.price).toLocaleString()}₫</div>
+      <div class="modal-price">
+  ${p.status === 'Out Stock' 
+    ? '<span class="price-out-stock" style="font-size:24px">Hết hàng</span>' 
+    : Number(p.price).toLocaleString() + '₫'}
+</div>
       <p class="modal-desc">${p.desc || ''}</p>
       ${p.extra ? `<div style="font-size:13px;color:var(--gray-light);line-height:1.7;margin-bottom:20px">${p.extra}</div>` : ''}
-      <button class="btn btn-full" onclick="addToCart('${p.id}')">THÊM VÀO GIỎ HÀNG</button>
+      ${p.status === 'Out Stock' 
+  ? `<button class="btn btn-full btn-out-stock" disabled>TẠM HẾT HÀNG</button>` 
+  : `<button class="btn btn-full" onclick="addToCart('${p.id}')">THÊM VÀO GIỎ HÀNG</button>`
+}
     </div>`;
 
   document.getElementById('modal').classList.add('open');
