@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <link rel="icon" type="image/png" href="https://i.postimg.cc/CMk5TvWZ/icon-5x.png">
 <link rel="apple-touch-icon" href="https://i.postimg.cc/CMk5TvWZ/icon-5x.png">
-<title>GARA TÍ HON — #hobbyreplay</title>
+<title>GARA TÍ HON — Professional Shop</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@500;600&family=Be+Vietnam+Pro:wght@300;400;500;600&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
 <style>
@@ -41,40 +41,85 @@ input, textarea { font-family: var(--font-b); }
 .hide { display: none !important; }
 
 /* ══════════════════════════════════════
-   LOADER
+   LOADER (chỉ hiện lần đầu, không có cache)
 ══════════════════════════════════════ */
 .loader {
   position: fixed; inset: 0; background: var(--black);
   z-index: 9000; display: flex; align-items: center; justify-content: center;
-  transition: opacity 0.4s var(--ease);
+  transition: opacity 0.35s var(--ease);
 }
 .loader.hidden { opacity: 0; pointer-events: none; }
-.loader-icon {
-  width: 44px; height: 44px; margin: 0 auto 20px;
-  border: 2px solid rgba(200,82,42,0.15);
-  border-top-color: var(--accent); border-radius: 50%;
-  animation: spin 0.8s linear infinite;
-}
-@keyframes spin { to { transform: rotate(360deg); } }
 .loader-content { text-align: center; }
-.loader-content h1 { font-family: var(--font-d); font-size: 30px; letter-spacing: 5px; margin-bottom: 8px; }
-.loader-content p  { color: var(--gray-light); font-size: 13px; }
+.loader-content h1 { font-family: var(--font-d); font-size: 28px; letter-spacing: 5px; margin-bottom: 8px; }
+.loader-content p  { color: var(--gray-light); font-size: 12px; }
+/* Loader animation giữ nguyên theo style gốc của bạn */
+.loader-anim {
+  width: 24px; height: 80px; display: block; margin: 0 auto 24px;
+  border: 1px solid #FFF; border-radius: 0 0 50px 50px;
+  position: relative; box-sizing: border-box;
+  background-image: linear-gradient(#D96030 100px, transparent 0);
+  background-position: 0px 80px; background-size: 22px 80px;
+  background-repeat: no-repeat;
+  animation: fillUp 2.4s linear infinite;
+}
+.loader-anim::after {
+  content: ''; box-sizing: border-box; top: -6px; left: 50%;
+  transform: translateX(-50%); position: absolute;
+  border: 1px solid #FFF; border-radius: 50%; width: 28px; height: 6px;
+}
+.loader-anim::before {
+  content: ''; box-sizing: border-box; left: 0; bottom: -4px;
+  border-radius: 50%; position: absolute; width: 6px; height: 6px;
+  animation: bubbles 2.4s linear infinite;
+}
+@keyframes fillUp {
+  0%   { background-position: 0px 80px; }
+  100% { background-position: 0px 0px; }
+}
+@keyframes bubbles {
+  0%   { box-shadow: 4px -10px rgba(255,255,255,0), 8px 0 rgba(255,255,255,0); }
+  40%  { box-shadow: 2px -40px rgba(255,255,255,.5), 8px -60px rgba(255,255,255,.5); }
+  80%  { box-shadow: 2px -80px rgba(255,255,255,.4), 8px -120px rgba(255,255,255,0); }
+  100% { box-shadow: 4px -100px rgba(255,255,255,0), 8px -90px rgba(255,255,255,0); }
+}
+
+/* ══════════════════════════════════════
+   SKELETON LOADING (Tầng 3)
+══════════════════════════════════════ */
+@keyframes shimmer {
+  0%   { background-position: -600px 0; }
+  100% { background-position: 600px 0; }
+}
+.skeleton {
+  background: linear-gradient(90deg, #1a1a1a 25%, #252525 50%, #1a1a1a 75%);
+  background-size: 600px 100%; animation: shimmer 1.4s infinite linear;
+  border-radius: 6px;
+}
+.skeleton-card {
+  background: var(--black); padding: 18px;
+}
+.skeleton-img  { aspect-ratio: 1; border-radius: 6px; margin-bottom: 12px; }
+.skeleton-name { height: 14px; margin-bottom: 8px; width: 85%; }
+.skeleton-price{ height: 12px; width: 50%; }
+
+/* Cat skeleton */
+.skeleton-cat {
+  display: inline-block; height: 30px; border-radius: 100px;
+  margin: 0 4px 8px;
+}
 
 /* ══════════════════════════════════════
    NAVIGATION
 ══════════════════════════════════════ */
 nav {
   position: fixed; top: 0; left: 0; right: 0; z-index: 600;
-  height: var(--nav-h);
-  display: flex; align-items: center; gap: 6px;
+  height: var(--nav-h); display: flex; align-items: center; gap: 6px;
   padding: 0 24px;
   background: rgba(10,10,10,0.9); backdrop-filter: blur(24px);
   border-bottom: 1px solid var(--border);
 }
 .nav-logo { flex-shrink: 0; cursor: pointer; line-height: 0; margin-right: 6px; }
 .nav-logo img { height: 36px; }
-
-/* Desktop links */
 .nav-links { display: flex; align-items: center; gap: 2px; }
 .nav-link {
   padding: 6px 13px; border-radius: 100px;
@@ -86,34 +131,25 @@ nav {
 .nav-link.active { background: var(--accent); color: var(--white); }
 .nav-link.accent { color: var(--accent); }
 
-/* Search bar — appears after Login btn in desktop */
+/* Search */
 .nav-search {
   position: relative; display: flex; align-items: center;
-  background: rgba(255,255,255,0.05);
-  border: 1px solid rgba(255,255,255,0.1);
-  border-radius: 100px;
-  padding: 0 8px 0 14px; height: 34px;
+  background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1);
+  border-radius: 100px; padding: 0 8px 0 14px; height: 34px;
   transition: all 0.35s var(--ease); width: 165px;
 }
 .nav-search:focus-within {
   width: 220px; background: rgba(255,255,255,0.08);
   border-color: var(--accent); box-shadow: 0 0 16px rgba(200,82,42,0.18);
 }
-.nav-search input {
-  background: transparent; border: none; outline: none;
-  color: var(--white); font-size: 12px; width: 100%;
-}
+.nav-search input { background: transparent; border: none; outline: none; color: var(--white); font-size: 12px; width: 100%; }
 .nav-search input::placeholder { color: var(--gray-light); font-size: 11.5px; }
 .nav-search-icon { color: var(--gray-light); font-size: 13px; flex-shrink: 0; transition: color 0.2s; }
 .nav-search:focus-within .nav-search-icon { color: var(--accent); }
-
 .nav-spacer { flex: 1; }
 
 /* Cart */
-.cart-btn {
-  position: relative; font-size: 19px;
-  padding: 4px 6px; line-height: 1; flex-shrink: 0;
-}
+.cart-btn { position: relative; font-size: 19px; padding: 4px 6px; line-height: 1; flex-shrink: 0; }
 .cart-count {
   position: absolute; top: -3px; right: -5px;
   background: var(--accent); color: var(--white);
@@ -122,11 +158,10 @@ nav {
   display: flex; align-items: center; justify-content: center;
 }
 
-/* Hamburger — mobile only */
+/* Hamburger */
 .hamburger {
   display: none; flex-direction: column; justify-content: center;
-  align-items: center; gap: 5px;
-  width: 36px; height: 36px; flex-shrink: 0; cursor: pointer;
+  align-items: center; gap: 5px; width: 36px; height: 36px; flex-shrink: 0;
 }
 .hamburger span {
   display: block; width: 21px; height: 2px; background: var(--white);
@@ -137,7 +172,7 @@ nav {
 .hamburger.open span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
 
 /* ══════════════════════════════════════
-   MOBILE MENU SLIDE-DOWN
+   MOBILE MENU
 ══════════════════════════════════════ */
 .mobile-menu {
   position: fixed; top: var(--nav-h); left: 0; right: 0; z-index: 590;
@@ -157,19 +192,13 @@ nav {
 .mob-link:hover  { color: var(--white); background: rgba(255,255,255,0.04); }
 .mob-link.active { background: var(--accent); color: var(--white); }
 .mob-link.accent { color: var(--accent); }
-
-/* Search inside mobile menu */
 .mob-search {
   display: flex; align-items: center; gap: 10px;
   background: rgba(255,255,255,0.06); border: 1px solid var(--border);
-  border-radius: var(--radius); padding: 10px 14px;
-  transition: border-color 0.2s;
+  border-radius: var(--radius); padding: 10px 14px; transition: border-color 0.2s;
 }
 .mob-search:focus-within { border-color: var(--accent); }
-.mob-search input {
-  background: transparent; border: none; outline: none;
-  color: var(--white); font-size: 14px; flex: 1;
-}
+.mob-search input { background: transparent; border: none; outline: none; color: var(--white); font-size: 14px; flex: 1; }
 .mob-search input::placeholder { color: var(--gray-light); }
 .mob-search-icon { color: var(--gray-light); font-size: 16px; flex-shrink: 0; }
 
@@ -193,6 +222,11 @@ nav {
 .btn:active { transform: translateY(0); }
 .btn:disabled { opacity: 0.55; cursor: not-allowed; transform: none; }
 .btn-full { width: 100%; text-align: center; }
+.btn-out {
+  background: #2a2a2a !important; color: #555 !important;
+  cursor: not-allowed !important; transform: none !important;
+  box-shadow: none !important; border: 1px solid #333 !important;
+}
 
 /* ══════════════════════════════════════
    HOME
@@ -206,36 +240,22 @@ nav {
   font-family: var(--font-d); font-size: clamp(46px, 7vw, 78px);
   line-height: 0.92; margin-bottom: 20px; font-weight: 600;
 }
-.home-desc {
-  color: var(--gray-light); font-size: 14px; line-height: 1.9;
-  text-align: justify; margin-bottom: 36px; max-width: 480px;
-}
-.home-imgs {
-  flex: 1; display: grid; grid-template-columns: 1fr 1fr;
-  gap: 12px; min-width: 260px;
-}
-.home-img-cell {
-  aspect-ratio: 1; background: #111; border-radius: var(--radius);
-  overflow: hidden; display: flex; align-items: center; justify-content: center;
-}
+.home-desc { color: var(--gray-light); font-size: 14px; line-height: 1.9; text-align: justify; margin-bottom: 36px; max-width: 480px; }
+.home-imgs  { flex: 1; display: grid; grid-template-columns: 1fr 1fr; gap: 12px; min-width: 260px; }
+.home-img-cell { aspect-ratio: 1; background: #111; border-radius: var(--radius); overflow: hidden; display: flex; align-items: center; justify-content: center; }
 .home-img-cell img { width: 100%; height: 100%; object-fit: cover; }
 
 /* ══════════════════════════════════════
-   SHOP
+   SHOP — Desktop sidebar
 ══════════════════════════════════════ */
 .shop-wrap { display: flex; }
-
-/* ── Desktop sidebar (cột dọc) ── */
 .shop-sidebar {
   width: 230px; flex-shrink: 0; padding: 30px 14px;
   border-right: 1px solid var(--border);
   position: sticky; top: var(--nav-h);
   height: calc(100vh - var(--nav-h)); overflow-y: auto;
 }
-.sidebar-title {
-  font-family: var(--font-d); font-size: 14px; letter-spacing: 2px;
-  color: var(--gray-light); margin-bottom: 12px;
-}
+.sidebar-title { font-family: var(--font-d); font-size: 14px; letter-spacing: 2px; color: var(--gray-light); margin-bottom: 12px; }
 .cat-btn {
   display: block; width: 100%; text-align: left;
   padding: 9px 12px; margin-bottom: 3px;
@@ -246,57 +266,66 @@ nav {
 .cat-btn:hover  { color: var(--white); border-color: var(--border); }
 .cat-btn.active { background: var(--accent); color: var(--white); border-color: var(--accent); }
 
-/* ── Mobile category bar (scroll ngang) ── */
+/* ══════════════════════════════════════
+   MOBILE CATEGORY PILL BAR (cuộn ngang)
+══════════════════════════════════════ */
 .mob-cat-bar {
-  display: none; /* ẩn trên desktop */
+  display: none;
   position: sticky; top: var(--nav-h); z-index: 100;
-  background: var(--black);
+  background: rgba(10,10,10,0.95); backdrop-filter: blur(16px);
   border-bottom: 1px solid var(--border);
-  padding: 10px 0;
+  padding: 10px 0 10px;
 }
 .mob-cat-scroll {
   display: flex; gap: 8px; overflow-x: auto;
   padding: 0 14px;
-  scrollbar-width: none; /* Firefox */
-  -ms-overflow-style: none;
+  scrollbar-width: none; -ms-overflow-style: none;
 }
 .mob-cat-scroll::-webkit-scrollbar { display: none; }
 .mob-cat-pill {
-  flex-shrink: 0;
-  padding: 7px 16px;
-  border-radius: 100px;
-  border: 1px solid var(--border);
-  background: transparent;
-  color: var(--gray-light);
-  font-size: 12.5px; font-weight: 600;
+  flex-shrink: 0; padding: 7px 16px; border-radius: 100px;
+  border: 1px solid var(--border); background: transparent;
+  color: var(--gray-light); font-size: 12.5px; font-weight: 600;
   white-space: nowrap; letter-spacing: 0.2px;
-  transition: all 0.2s; cursor: pointer;
-  font-family: var(--font-b);
+  transition: all 0.2s; cursor: pointer; font-family: var(--font-b);
 }
 .mob-cat-pill:active { transform: scale(0.96); }
-.mob-cat-pill.active {
-  background: var(--accent); color: var(--white);
-  border-color: var(--accent);
-  box-shadow: 0 4px 14px rgba(200,82,42,0.3);
-}
+.mob-cat-pill.active { background: var(--accent); color: var(--white); border-color: var(--accent); box-shadow: 0 4px 14px rgba(200,82,42,0.3); }
 
+/* ══════════════════════════════════════
+   PRODUCT GRID
+══════════════════════════════════════ */
 .product-grid {
-  flex: 1; display: grid;
-  grid-template-columns: repeat(4, 1fr);
+  flex: 1; display: grid; grid-template-columns: repeat(4, 1fr);
   gap: 1px; background: var(--border); align-content: start;
 }
-.product-card { background: var(--black); padding: 18px; cursor: pointer; transition: background 0.2s; }
+.product-card { background: var(--black); padding: 18px; cursor: pointer; transition: background 0.2s; position: relative; }
 .product-card:hover { background: var(--gray); }
 .p-img {
   aspect-ratio: 1; background: #111; border-radius: 6px;
   overflow: hidden; display: flex; align-items: center; justify-content: center;
-  margin-bottom: 12px;
+  margin-bottom: 12px; position: relative;
 }
 .p-img img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.4s var(--ease); }
 .product-card:hover .p-img img { transform: scale(1.06); }
 .p-placeholder { font-size: 44px; }
 .p-name  { font-size: 12.5px; font-weight: 600; line-height: 1.4; margin-bottom: 5px; }
 .p-price { font-family: var(--font-m); font-size: 12px; color: var(--accent); font-weight: 700; }
+
+/* Out of stock badge trên card */
+.out-badge {
+  position: absolute; top: 8px; left: 8px; z-index: 2;
+  background: rgba(0,0,0,0.75); backdrop-filter: blur(4px);
+  border: 1px solid rgba(255,80,80,0.4);
+  color: #ff6b6b; font-size: 9px; font-weight: 700;
+  letter-spacing: 1px; text-transform: uppercase;
+  padding: 3px 8px; border-radius: 4px;
+}
+/* Làm mờ ảnh khi hết hàng */
+.p-img.is-out img { opacity: 0.45; filter: grayscale(40%); }
+/* Giá khi hết hàng */
+.price-out { color: #666 !important; font-family: var(--font-b) !important; font-size: 12px !important; font-weight: 500 !important; }
+
 .empty-state { grid-column: 1/-1; padding: 80px 20px; text-align: center; color: var(--gray-light); font-size: 14px; }
 
 /* ══════════════════════════════════════
@@ -307,8 +336,7 @@ nav {
 .video-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; }
 .video-card {
   background: #000; border-radius: 14px; overflow: hidden;
-  aspect-ratio: 9/16; border: 1px solid var(--border);
-  transition: all 0.4s var(--ease);
+  aspect-ratio: 9/16; border: 1px solid var(--border); transition: all 0.4s var(--ease);
 }
 .video-card:hover { transform: translateY(-4px); border-color: var(--accent); box-shadow: 0 12px 30px rgba(0,0,0,0.5); }
 .video-card iframe { width: 100%; height: 100%; border: none; }
@@ -334,16 +362,14 @@ nav {
   display: flex; gap: 40px; flex-wrap: wrap;
   max-width: 940px; width: 100%;
   background: var(--gray); border-radius: 14px; padding: 34px;
-  margin: 54px auto 20px;
-  animation: modalIn 0.3s var(--ease);
+  margin: 54px auto 20px; animation: modalIn 0.3s var(--ease);
 }
 @keyframes modalIn { from { opacity: 0; transform: scale(0.96) translateY(12px); } to { opacity: 1; transform: none; } }
 .modal-left  { flex: 1.1; min-width: 220px; }
 .modal-right { flex: 1;   min-width: 220px; }
 .main-img {
   aspect-ratio: 1; background: #111; border-radius: var(--radius);
-  overflow: hidden; display: flex; align-items: center; justify-content: center;
-  margin-bottom: 10px;
+  overflow: hidden; display: flex; align-items: center; justify-content: center; margin-bottom: 10px;
 }
 .main-img img { width: 100%; height: 100%; object-fit: cover; }
 .thumbs { display: flex; gap: 7px; flex-wrap: wrap; }
@@ -356,16 +382,13 @@ nav {
 .modal-badge { font-size: 10px; color: var(--accent); letter-spacing: 2px; font-family: var(--font-m); margin-bottom: 10px; }
 .modal-name  { font-family: var(--font-d); font-size: clamp(26px, 3.2vw, 44px); line-height: 1; margin-bottom: 14px; }
 .modal-price { font-family: var(--font-m); color: var(--accent); font-size: 22px; font-weight: 700; margin-bottom: 18px; }
+.modal-price.out { color: #ff6b6b; font-family: var(--font-b); font-size: 16px; font-weight: 600; letter-spacing: 0.5px; }
 .modal-desc  { color: rgba(245,242,237,0.68); font-size: 13.5px; line-height: 1.85; text-align: justify; margin-bottom: 22px; }
 
 /* ══════════════════════════════════════
    CART DRAWER
 ══════════════════════════════════════ */
-.cart-overlay {
-  position: fixed; inset: 0; background: rgba(0,0,0,0.55);
-  z-index: 700; opacity: 0; pointer-events: none;
-  transition: opacity 0.35s var(--ease);
-}
+.cart-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.55); z-index: 700; opacity: 0; pointer-events: none; transition: opacity 0.35s var(--ease); }
 .cart-overlay.open { opacity: 1; pointer-events: all; }
 #cart-drawer {
   position: fixed; top: 0; right: 0; bottom: 0; z-index: 710;
@@ -375,72 +398,41 @@ nav {
   transform: translateX(100%); transition: transform 0.4s var(--ease);
 }
 #cart-drawer.open { transform: translateX(0); }
-.cart-head {
-  display: flex; align-items: center; justify-content: space-between;
-  padding: 20px 22px; border-bottom: 1px solid var(--border); flex-shrink: 0;
-}
+.cart-head { display: flex; align-items: center; justify-content: space-between; padding: 20px 22px; border-bottom: 1px solid var(--border); flex-shrink: 0; }
 .cart-head h2 { font-family: var(--font-d); font-size: 20px; letter-spacing: 2px; }
 .cart-head-close { color: var(--gray-light); font-size: 20px; padding: 4px; transition: color 0.2s; }
 .cart-head-close:hover { color: var(--white); }
 .cart-list { flex: 1; overflow-y: auto; padding: 12px 16px; }
 .cart-item { display: flex; gap: 12px; padding: 14px 0; border-bottom: 1px solid var(--border); }
-.cart-item-img {
-  width: 66px; height: 66px; border-radius: 6px;
-  background: #111; overflow: hidden; flex-shrink: 0;
-  display: flex; align-items: center; justify-content: center; font-size: 26px;
-}
+.cart-item-img { width: 66px; height: 66px; border-radius: 6px; background: #111; overflow: hidden; flex-shrink: 0; display: flex; align-items: center; justify-content: center; font-size: 26px; }
 .cart-item-img img { width: 100%; height: 100%; object-fit: cover; }
 .cart-item-name  { font-size: 12.5px; font-weight: 600; line-height: 1.4; margin-bottom: 4px; }
 .cart-item-price { color: var(--accent); font-size: 11.5px; font-family: var(--font-m); margin-bottom: 10px; }
 .qty-row { display: flex; align-items: center; gap: 10px; }
-.qty-btn {
-  width: 27px; height: 27px; border-radius: 50%;
-  background: var(--black); border: 1px solid var(--border);
-  color: var(--white); font-size: 16px; line-height: 1;
-  display: flex; align-items: center; justify-content: center;
-  transition: all 0.2s;
-}
+.qty-btn { width: 27px; height: 27px; border-radius: 50%; background: var(--black); border: 1px solid var(--border); color: var(--white); font-size: 16px; line-height: 1; display: flex; align-items: center; justify-content: center; transition: all 0.2s; }
 .qty-btn:hover { background: var(--accent); border-color: var(--accent); }
 .qty-val { font-family: var(--font-m); font-size: 12px; min-width: 18px; text-align: center; }
 .cart-empty-msg { text-align: center; opacity: 0.3; padding: 60px 20px; }
 .cart-empty-msg p { margin-top: 10px; font-size: 13px; }
-.cart-foot {
-  padding: 18px 22px; border-top: 1px solid var(--border);
-  flex-shrink: 0; background: var(--black);
-}
+.cart-foot { padding: 18px 22px; border-top: 1px solid var(--border); flex-shrink: 0; background: var(--black); }
 .cart-total-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px; }
 .cart-total-label { font-size: 11px; letter-spacing: 1px; color: var(--gray-light); text-transform: uppercase; }
 .cart-total-val   { font-family: var(--font-m); font-size: 18px; color: var(--accent); font-weight: 700; }
 
 /* ══════════════════════════════════════
-   OVERLAYS (Login / Admin form)
+   OVERLAYS / FORMS
 ══════════════════════════════════════ */
-.overlay-bg {
-  position: fixed; inset: 0; background: rgba(0,0,0,0.92); z-index: 3000;
-  display: none; align-items: center; justify-content: center;
-  backdrop-filter: blur(8px);
-}
+.overlay-bg { position: fixed; inset: 0; background: rgba(0,0,0,0.92); z-index: 3000; display: none; align-items: center; justify-content: center; backdrop-filter: blur(8px); }
 .overlay-bg.open { display: flex; }
 .form-box { background: var(--gray); border-radius: 14px; padding: 36px; width: 310px; text-align: center; }
 .form-box h2 { font-family: var(--font-d); letter-spacing: 2px; margin-bottom: 24px; }
-.form-input {
-  width: 100%; padding: 11px 15px; background: var(--black);
-  border: 1px solid var(--border); color: var(--white);
-  border-radius: 6px; font-size: 14px; outline: none;
-  margin-bottom: 12px; transition: border-color 0.2s; text-align: center;
-}
+.form-input { width: 100%; padding: 11px 15px; background: var(--black); border: 1px solid var(--border); color: var(--white); border-radius: 6px; font-size: 14px; outline: none; margin-bottom: 12px; transition: border-color 0.2s; text-align: center; }
 .form-input:focus { border-color: var(--accent); }
 .form-cancel { margin-top: 12px; opacity: 0.4; font-size: 13px; transition: opacity 0.2s; }
 .form-cancel:hover { opacity: 0.7; }
-
 .admin-wrap { max-width: 580px; margin: 40px auto; background: var(--gray); padding: 36px; border-radius: 14px; }
 .admin-wrap h2 { font-family: var(--font-d); letter-spacing: 2px; margin-bottom: 24px; }
-.admin-input {
-  width: 100%; padding: 11px 15px; background: var(--black);
-  border: 1px solid var(--border); color: var(--white);
-  border-radius: 6px; font-size: 14px; outline: none;
-  margin-bottom: 10px; transition: border-color 0.2s; display: block;
-}
+.admin-input { width: 100%; padding: 11px 15px; background: var(--black); border: 1px solid var(--border); color: var(--white); border-radius: 6px; font-size: 14px; outline: none; margin-bottom: 10px; transition: border-color 0.2s; display: block; }
 .admin-input:focus { border-color: var(--accent); }
 textarea.admin-input { resize: vertical; line-height: 1.7; }
 
@@ -453,87 +445,50 @@ textarea.admin-input { resize: vertical; line-height: 1.7; }
   color: var(--white); padding: 11px 22px; border-radius: 50px;
   z-index: 9999; transition: all 0.4s var(--ease); opacity: 0;
   font-size: 13px; font-weight: 500; white-space: nowrap;
-  display: flex; align-items: center; gap: 8px;
-  box-shadow: 0 8px 32px rgba(0,0,0,0.5);
+  display: flex; align-items: center; gap: 8px; box-shadow: 0 8px 32px rgba(0,0,0,0.5);
 }
 .toast.show { bottom: 28px; opacity: 1; }
 .toast-dot { width: 7px; height: 7px; background: var(--accent); border-radius: 50%; flex-shrink: 0; }
 
 /* ══════════════════════════════════════
-   SKELETON LOADING
+   RESPONSIVE — TABLET
 ══════════════════════════════════════ */
-@keyframes shimmer {
-  0%   { background-position: -600px 0; }
-  100% { background-position:  600px 0; }
-}
-.sk-box, .sk-line {
-  background: linear-gradient(90deg,
-    #1a1a1a 25%, #2a2a2a 50%, #1a1a1a 75%);
-  background-size: 600px 100%;
-  animation: shimmer 1.4s infinite linear;
-}
-.sk-box  { width: 100%; aspect-ratio: 1; border-radius: 6px; margin-bottom: 12px; }
-.sk-line { display: block; margin-bottom: 0; }
-.skeleton-card { pointer-events: none; }
-
-/* ══════════════════════════════════════
-   RESPONSIVE — TABLET ≤ 1100px
-══════════════════════════════════════ */
-@media (max-width: 1100px) {
-  .product-grid { grid-template-columns: repeat(3, 1fr); }
-}
+@media (max-width: 1100px) { .product-grid { grid-template-columns: repeat(3, 1fr); } }
 @media (max-width: 960px) {
   .product-grid { grid-template-columns: repeat(2, 1fr); }
   .video-grid   { grid-template-columns: repeat(3, 1fr); }
   .shop-wrap { flex-direction: column; }
-  .shop-sidebar {
-    width: 100%; height: auto; position: static;
-    display: flex; align-items: center; flex-wrap: wrap; gap: 6px;
-    padding: 14px 16px; border-right: none; border-bottom: 1px solid var(--border);
-  }
+  .shop-sidebar { width: 100%; height: auto; position: static; display: flex; align-items: center; flex-wrap: wrap; gap: 6px; padding: 14px 16px; border-right: none; border-bottom: 1px solid var(--border); }
   .sidebar-title { margin-bottom: 0; }
   .cat-btn { width: auto; }
-}
-/* ══ MOBILE ≤ 768: sidebar dọc → pill bar cuộn ngang ══ */
-@media (max-width: 768px) {
-  .shop-sidebar { display: none !important; }
-  .mob-cat-bar  { display: block; }
-  .shop-wrap    { flex-direction: column; }
 }
 
 /* ══════════════════════════════════════
    RESPONSIVE — MOBILE ≤ 768px
 ══════════════════════════════════════ */
 @media (max-width: 768px) {
-  /* Hide desktop nav links & desktop search; show hamburger */
-  .nav-links   { display: none; }
-  .nav-search  { display: none; }
-  .hamburger   { display: flex; }
-
+  .nav-links  { display: none; }
+  .nav-search { display: none; }
+  .hamburger  { display: flex; }
   nav { padding: 0 12px; gap: 6px; }
   .nav-logo img { height: 28px; }
 
-  /* Home */
-  .home-hero { padding: 36px 5% 48px; gap: 28px; }
-  .home-imgs  { display: none; }
-
-  /* Shop */
+  /* Shop: ẩn sidebar dọc, hiện pill bar ngang */
+  .shop-sidebar { display: none !important; }
+  .mob-cat-bar  { display: block; }
+  .shop-wrap    { flex-direction: column; }
   .product-grid { grid-template-columns: repeat(2, 1fr); }
 
-  /* Videos */
-  .video-grid   { grid-template-columns: repeat(2, 1fr); }
-  .videos-wrap  { padding: 28px 4%; }
+  .home-hero { padding: 36px 5% 48px; gap: 28px; }
+  .home-imgs  { display: none; }
+  .video-grid { grid-template-columns: repeat(2, 1fr); }
+  .videos-wrap { padding: 28px 4%; }
   .videos-wrap h2 { font-size: 28px; }
-
-  /* Modal full-width */
   .modal { padding: 8px; }
   .modal-box { padding: 20px; gap: 22px; margin: 48px auto 12px; }
   .modal-name { font-size: 28px; }
-
-  /* Cart full-width */
   #cart-drawer { width: 100vw; }
 }
-
 @media (max-width: 480px) {
   .product-grid { grid-template-columns: 1fr 1fr; gap: 1px; }
   .video-grid   { grid-template-columns: 1fr 1fr; }
@@ -543,19 +498,19 @@ textarea.admin-input { resize: vertical; line-height: 1.7; }
 </head>
 <body>
 
-<!-- LOADER -->
+<!-- ══ LOADER (chỉ hiện khi không có cache) ══ -->
 <div class="loader" id="loader">
   <div class="loader-content">
-    <div class="loader-icon"></div>
-    <h1>GARA TÍ HON</h1>
-    <p>Đợi xíu nhé, mình tới ngay đây...</p>
+    <div class="loader-anim"></div>
+    <h1>GARA TÍ HON LAB</h1>
+    <p>Đợi xíu nhé, mình cook xong ngay đây...</p>
   </div>
 </div>
 
-<!-- CART OVERLAY -->
+<!-- ══ CART OVERLAY ══ -->
 <div class="cart-overlay" id="cart-overlay" onclick="toggleCart()"></div>
 
-<!-- CART DRAWER -->
+<!-- ══ CART DRAWER ══ -->
 <div id="cart-drawer">
   <div class="cart-head">
     <h2>GIỎ HÀNG</h2>
@@ -571,7 +526,7 @@ textarea.admin-input { resize: vertical; line-height: 1.7; }
   </div>
 </div>
 
-<!-- LOGIN OVERLAY -->
+<!-- ══ LOGIN OVERLAY ══ -->
 <div class="overlay-bg" id="login-overlay">
   <div class="form-box">
     <h2>ADMIN LOGIN</h2>
@@ -586,34 +541,23 @@ textarea.admin-input { resize: vertical; line-height: 1.7; }
 <!-- ══ NAVIGATION ══ -->
 <nav>
   <div class="nav-logo" onclick="navTo('home')">
-    <img src="https://i.postimg.cc/cCRLRHQ2/icon-copy.png" alt="Gara Tí Hon"
-         onerror="this.style.display='none'">
+    <img src="https://i.postimg.cc/cCRLRHQ2/icon-copy.png" alt="Gara Tí Hon" onerror="this.style.display='none'">
   </div>
-
-  <!-- Desktop links -->
   <div class="nav-links" id="desktop-links">
     <button class="nav-link active" data-page="home"        onclick="navTo('home',this)">Home</button>
     <button class="nav-link"        data-page="shop"        onclick="navTo('shop',this)">Shop</button>
     <button class="nav-link"        data-page="videos-page" onclick="navTo('videos-page',this)">Videos</button>
-    <!-- <button class="nav-link accent" id="btn-login"          onclick="openLogin()">Login</button> -->
+    <button class="nav-link accent" id="btn-login"          onclick="openLogin()">Login</button>
     <button class="nav-link hide"   id="nav-admin"          data-page="admin" onclick="navTo('admin',this)">Admin</button>
   </div>
-
-  <!-- Search bar — right after Login, before spacer -->
   <div class="nav-search">
-    <input type="text" id="search-desktop" placeholder="Tìm thử..."
-           oninput="handleSearch(this.value)">
+    <input type="text" id="search-desktop" placeholder="Tìm xe..." oninput="handleSearch(this.value)">
     <span class="nav-search-icon">🔍</span>
   </div>
-
   <div class="nav-spacer"></div>
-
-  <!-- Cart icon -->
   <button class="cart-btn" onclick="toggleCart()" aria-label="Giỏ hàng">
     🛒<span class="cart-count" id="cart-count">0</span>
   </button>
-
-  <!-- Hamburger (mobile only) -->
   <button class="hamburger" id="hamburger" onclick="toggleMenu()" aria-label="Menu">
     <span></span><span></span><span></span>
   </button>
@@ -628,11 +572,9 @@ textarea.admin-input { resize: vertical; line-height: 1.7; }
     <button class="mob-link accent" id="mob-btn-login"      onclick="openLogin();closeMenu()">🔑 Login</button>
     <button class="mob-link hide"   id="mob-nav-admin"      data-page="admin" onclick="navTo('admin',this,true)">⚙️ Admin</button>
   </div>
-  <!-- Search in mobile menu -->
   <div class="mob-search">
     <span class="mob-search-icon">🔍</span>
-    <input type="text" id="search-mobile" placeholder="Tìm mẫu xe..."
-           oninput="handleSearch(this.value)">
+    <input type="text" id="search-mobile" placeholder="Tìm mẫu xe..." oninput="handleSearch(this.value)">
   </div>
 </div>
 
@@ -642,7 +584,7 @@ textarea.admin-input { resize: vertical; line-height: 1.7; }
 <div id="home" class="page active">
   <div class="home-hero">
     <div class="home-text">
-      <h1 class="home-title" id="h-title">#GTHLAB<br>#GARATIHON<br>#HOBBYREPLAY</h1>
+      <h1 class="home-title" id="h-title">GARA TÍ HON</h1>
       <p class="home-desc" id="h-desc">Đang kết nối...</p>
       <button class="btn" onclick="navTo('shop',document.querySelector('[data-page=shop]'))">Vào Cửa Hàng</button>
     </div>
@@ -652,19 +594,37 @@ textarea.admin-input { resize: vertical; line-height: 1.7; }
 
 <!-- SHOP -->
 <div id="shop" class="page">
-  <!-- Mobile pill bar (cuộn ngang) -->
+  <!-- Mobile pill bar -->
   <div class="mob-cat-bar">
     <div class="mob-cat-scroll" id="mob-cat-scroll">
-      <!-- Filled by JS -->
+      <!-- Skeleton pills khi chưa có data -->
+      <div class="skeleton skeleton-cat" style="width:70px"></div>
+      <div class="skeleton skeleton-cat" style="width:90px"></div>
+      <div class="skeleton skeleton-cat" style="width:80px"></div>
+      <div class="skeleton skeleton-cat" style="width:100px"></div>
     </div>
   </div>
-
   <div class="shop-wrap">
     <aside class="shop-sidebar">
       <div class="sidebar-title">DANH MỤC</div>
-      <div id="cat-list"></div>
+      <div id="cat-list">
+        <!-- Skeleton desktop -->
+        <div class="skeleton skeleton-cat" style="width:80%;height:36px;display:block;margin-bottom:6px"></div>
+        <div class="skeleton skeleton-cat" style="width:90%;height:36px;display:block;margin-bottom:6px"></div>
+        <div class="skeleton skeleton-cat" style="width:75%;height:36px;display:block;margin-bottom:6px"></div>
+      </div>
     </aside>
-    <div class="product-grid" id="prod-grid"></div>
+    <!-- Skeleton 8 cards mặc định -->
+    <div class="product-grid" id="prod-grid">
+      <div class="skeleton-card"><div class="skeleton skeleton-img"></div><div class="skeleton skeleton-name"></div><div class="skeleton skeleton-price"></div></div>
+      <div class="skeleton-card"><div class="skeleton skeleton-img"></div><div class="skeleton skeleton-name"></div><div class="skeleton skeleton-price"></div></div>
+      <div class="skeleton-card"><div class="skeleton skeleton-img"></div><div class="skeleton skeleton-name"></div><div class="skeleton skeleton-price"></div></div>
+      <div class="skeleton-card"><div class="skeleton skeleton-img"></div><div class="skeleton skeleton-name"></div><div class="skeleton skeleton-price"></div></div>
+      <div class="skeleton-card"><div class="skeleton skeleton-img"></div><div class="skeleton skeleton-name"></div><div class="skeleton skeleton-price"></div></div>
+      <div class="skeleton-card"><div class="skeleton skeleton-img"></div><div class="skeleton skeleton-name"></div><div class="skeleton skeleton-price"></div></div>
+      <div class="skeleton-card"><div class="skeleton skeleton-img"></div><div class="skeleton skeleton-name"></div><div class="skeleton skeleton-price"></div></div>
+      <div class="skeleton-card"><div class="skeleton skeleton-img"></div><div class="skeleton skeleton-name"></div><div class="skeleton skeleton-price"></div></div>
+    </div>
   </div>
 </div>
 
@@ -698,26 +658,40 @@ textarea.admin-input { resize: vertical; line-height: 1.7; }
 </div>
 
 <script>
-/* ═══════════════════════════════════════
+/* ══════════════════════════════════════════════
    CONFIG
-═══════════════════════════════════════ */
-const _0x4f2a      = "aHR0cHM6Ly9zY3JpcHQuZ29vZ2xlLmNvbS9tYWNyb3Mvcy9BS2Z5Y2J3UFl1UVVWak5VY2UySVFXM3EyckdOalBNNEVSQ2VBY3NMbGoyTzZiNVRvY3d6bGJDaV9rRzJHWDFUaG5vRWYzRmcvZXhlYw==";
-const API          = atob(_0x4f2a);
-const ZALO_NUMBER  = "0382949505"; // ← đổi số Zalo ở đây
-const CACHE_KEY    = 'gth_data_v1';
-const CACHE_TTL    = 10 * 60 * 1000; // 10 phút (ms)
+══════════════════════════════════════════════ */
+const _0x4f2a     = "aHR0cHM6Ly9zY3JpcHQuZ29vZ2xlLmNvbS9tYWNyb3Mvcy9BS2Z5Y2J6UGFpYVVRM2hGYlpIYU1PZXdxN2RUVkVKYjZoQy1pcWpFUUhYZzVHZ19nVTE3bHFqNm11RVl3X2tycWZ4dWhfZmovZXhlYw==";
+const API         = atob(_0x4f2a);
+const ZALO_NUMBER = "0382949505";
 
-/* ═══════════════════════════════════════
-   STATE
-═══════════════════════════════════════ */
-let products = [], categories = [], videosData = [], token = '';
-let cart = [];
-try { cart = JSON.parse(localStorage.getItem('gth_cart')) || []; } catch { cart = []; }
+/* ══════════════════════════════════════════════
+   CACHE CONFIG (Tầng 1 + Smart Image Cache)
+══════════════════════════════════════════════ */
+const CACHE_KEY      = 'gth_data_v2';     // data chính (thumbnail + meta, không có full images)
+const CACHE_FULL_KEY = 'gth_full_v2';     // full images[] của từng sản phẩm, key = product id
+const CACHE_TTL      = 10 * 60 * 1000;   // 10 phút
 
-/* ═══════════════════════════════════════
-   CACHE HELPERS
-═══════════════════════════════════════ */
-function readCache() {
+function saveCache(data) {
+  try {
+    // Tách full images ra khỏi data chính
+    const fullImgs = {};
+    const slim = {
+      ...data,
+      products: data.products.map(p => {
+        fullImgs[p.id] = p.images || [];               // lưu full images riêng
+        return { ...p, images: p.images?.slice(0,1) }; // giữ lại chỉ thumbnail
+      })
+    };
+    localStorage.setItem(CACHE_KEY, JSON.stringify({ ts: Date.now(), data: slim }));
+    localStorage.setItem(CACHE_FULL_KEY, JSON.stringify(fullImgs));
+  } catch(e) {
+    // localStorage đầy → bỏ qua, không crash
+    console.warn('Cache save failed:', e);
+  }
+}
+
+function loadCache() {
   try {
     const raw = localStorage.getItem(CACHE_KEY);
     if (!raw) return null;
@@ -727,54 +701,90 @@ function readCache() {
   } catch { return null; }
 }
 
-function writeCache(data) {
+function loadFullImages(productId) {
   try {
-    // Chỉ lưu những field cần thiết, bỏ field thừa để giảm kích thước
-    const slim = {
-      settings: data.settings,
-      categories: data.categories,
-      videos: data.videos,
-      // Với mỗi product: chỉ giữ các field hiển thị, KHÔNG lưu images[1..n]
-      // images[0] (thumbnail) vẫn giữ, images còn lại load khi mở modal
-      products: (data.products || []).map(p => ({
-        ...p,
-        images: p.images?.length ? [p.images[0]] : [] // chỉ cache thumbnail
-      }))
-    };
-    localStorage.setItem(CACHE_KEY, JSON.stringify({ ts: Date.now(), data: slim }));
-    // Lưu full data riêng để dùng khi mở modal (không tính vào TTL)
-    localStorage.setItem('gth_full_v1', JSON.stringify(data.products || []));
-  } catch(e) {
-    // localStorage đầy → xóa cache cũ rồi thử lại
-    localStorage.removeItem(CACHE_KEY);
-    localStorage.removeItem('gth_full_v1');
-  }
-}
-
-// Lấy full images của 1 product từ cache full
-function getFullProduct(id) {
-  try {
-    const full = JSON.parse(localStorage.getItem('gth_full_v1') || '[]');
-    return full.find(p => String(p.id) === String(id)) || null;
+    const raw = localStorage.getItem(CACHE_FULL_KEY);
+    if (!raw) return null;
+    const all = JSON.parse(raw);
+    return all[productId] || null;
   } catch { return null; }
 }
 
-/* ═══════════════════════════════════════
-   SKELETON LOADER
-═══════════════════════════════════════ */
-function showSkeleton(count = 8) {
-  const grid = document.getElementById('prod-grid');
-  grid.innerHTML = Array(count).fill(0).map(() => `
-    <div class="product-card skeleton-card">
-      <div class="p-img sk-box" style="border-radius:6px"></div>
-      <div class="sk-line" style="width:80%;height:13px;margin-bottom:7px;border-radius:4px"></div>
-      <div class="sk-line" style="width:45%;height:12px;border-radius:4px"></div>
-    </div>`).join('');
+/* ══════════════════════════════════════════════
+   STATE
+══════════════════════════════════════════════ */
+let products = [], categories = [], videosData = [], token = '';
+let cart = [];
+try { cart = JSON.parse(localStorage.getItem('gth_cart')) || []; } catch { cart = []; }
+
+/* ══════════════════════════════════════════════
+   HELPER — thumbnail URL (Google Drive resize)
+══════════════════════════════════════════════ */
+function makeThumb(url) {
+  if (!url) return url;
+  if (url.includes('drive.google.com') || url.includes('lh3.googleusercontent.com') || url.includes('googleusercontent')) {
+    return url.replace(/=s\d+$/, '') + '=s400';
+  }
+  return url;
 }
 
-/* ═══════════════════════════════════════
-   APPLY DATA TO UI
-═══════════════════════════════════════ */
+/* ══════════════════════════════════════════════
+   LOADER
+══════════════════════════════════════════════ */
+function hideLoader() {
+  const l = document.getElementById('loader');
+  l.classList.add('hidden');
+  setTimeout(() => { l.style.display = 'none'; }, 380);
+}
+
+/* ══════════════════════════════════════════════
+   INIT — 3 tầng cache
+══════════════════════════════════════════════ */
+async function init() {
+  renderCart();
+
+  const cached = loadCache();
+
+  /* ── TẦNG 1: Có cache → render ngay, loader biến mất tức thì ── */
+  if (cached) {
+    applyData(cached);
+    hideLoader();                          // biến mất gần như tức thì
+
+    /* ── TẦNG 2: Background refresh (âm thầm, user không bị chặn) ── */
+    setTimeout(() => fetchAndRefresh(), 100);
+    return;
+  }
+
+  /* ── TẦNG 3: Chưa có cache → skeleton đã hiện sẵn trong HTML
+     Chỉ cần gọi API, loader KHÔNG hiện (skeleton thay thế) ── */
+  hideLoader(); // ẩn loader ngay, skeleton đã sẵn trong HTML rồi
+  await fetchAndRefresh(true); // true = lần đầu, cần render sau khi fetch
+}
+
+/* ══════════════════════════════════════════════
+   FETCH API + lưu cache
+══════════════════════════════════════════════ */
+async function fetchAndRefresh(isFirstLoad = false) {
+  try {
+    const res  = await fetch(`${API}?action=public_data`);
+    if (!res.ok) throw new Error('API error');
+    const data = await res.json();
+    saveCache(data);               // lưu cache mới (Tầng 1 lần sau)
+    if (isFirstLoad) applyData(data); // Tầng 3: render sau khi fetch xong
+    // Tầng 2: data đã được cache, lần sau sẽ dùng cache mới
+  } catch(e) {
+    console.warn('Background fetch failed:', e);
+    if (isFirstLoad) {
+      // Fallback nếu fetch lỗi lần đầu
+      document.getElementById('h-title').innerHTML = 'GARA TÍ HON';
+      document.getElementById('h-desc').innerHTML  = 'Không thể tải dữ liệu. Vui lòng thử lại.';
+    }
+  }
+}
+
+/* ══════════════════════════════════════════════
+   APPLY DATA — đổ data vào UI
+══════════════════════════════════════════════ */
 function applyData(data) {
   if (data.settings) {
     document.getElementById('h-title').innerHTML = data.settings.home_title || 'GARA TÍ HON';
@@ -796,86 +806,18 @@ function applyData(data) {
   renderVideos();
 }
 
-/* ═══════════════════════════════════════
-   FETCH FROM API
-═══════════════════════════════════════ */
-async function fetchFromAPI() {
-  const res = await fetch(`${API}?action=public_data`);
-  if (!res.ok) throw new Error('Network error');
-  return res.json();
-}
-
-/* ═══════════════════════════════════════
-   INIT  — 3 tầng tối ưu
-═══════════════════════════════════════ */
-async function init() {
-  renderCart();
-
-  const cached = readCache();
-
-  if (cached) {
-    // ── TẦNG 1: Có cache → render ngay, ẩn loader tức thì ──
-    applyData(cached);
-    hideLoader();
-
-    // ── TẦNG 2: Ngầm refresh cache ở background, user không bị block ──
-    fetchFromAPI()
-      .then(fresh => {
-        writeCache(fresh);
-        // Merge full images vào products đang hiển thị
-        // (không re-render toàn bộ để tránh giật)
-        try {
-          const fullList = JSON.parse(localStorage.getItem('gth_full_v1') || '[]');
-          products = fullList.length ? fullList : products;
-        } catch {}
-      })
-      .catch(() => {}); // silent — user đã có data rồi, lỗi không quan trọng
-
-  } else {
-    // ── TẦNG 3: Chưa có cache → show skeleton + fetch ──
-    showSkeleton(8);
-    // Ẩn loader sớm để user thấy skeleton ngay
-    hideLoader();
-    try {
-      const data = await fetchFromAPI();
-      writeCache(data);
-      applyData(data);
-    } catch(e) {
-      console.error('Init error:', e);
-      document.getElementById('h-title').innerHTML = 'GARA TÍ HON';
-      document.getElementById('h-desc').innerHTML  = 'Không thể tải dữ liệu. Vui lòng thử lại.';
-      document.getElementById('prod-grid').innerHTML =
-        `<div class="empty-state" style="grid-column:1/-1">
-           ⚠️ Mất kết nối. <button class="btn" style="margin-top:12px;padding:8px 20px" onclick="location.reload()">Thử lại</button>
-         </div>`;
-    }
-  }
-}
-
-function hideLoader() {
-  const l = document.getElementById('loader');
-  l.classList.add('hidden');
-  setTimeout(() => { l.style.display = 'none'; }, 450);
-}
-
-/* ═══════════════════════════════════════
+/* ══════════════════════════════════════════════
    NAVIGATION
-═══════════════════════════════════════ */
+══════════════════════════════════════════════ */
 let menuOpen = false;
 
 function navTo(pageId, el, fromMobile) {
-  // Switch page
   document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
   document.getElementById(pageId)?.classList.add('active');
-
-  // Sync desktop active state
   document.querySelectorAll('#desktop-links .nav-link[data-page]').forEach(b => b.classList.remove('active'));
   document.querySelector(`#desktop-links [data-page="${pageId}"]`)?.classList.add('active');
-
-  // Sync mobile active state
   document.querySelectorAll('#mobile-menu .mob-link[data-page]').forEach(b => b.classList.remove('active'));
   document.querySelector(`#mobile-menu [data-page="${pageId}"]`)?.classList.add('active');
-
   if (fromMobile) closeMenu();
   window.scrollTo({ top: 0, behavior: 'smooth' });
 }
@@ -891,83 +833,61 @@ function closeMenu() {
   document.getElementById('hamburger').classList.remove('open');
 }
 
-/* ═══════════════════════════════════════
-   SEARCH — hỗ trợ tiếng Việt có/không dấu
-═══════════════════════════════════════ */
-function normalize(str) {
-  return (str || '')
-    .normalize('NFD')                        // tách dấu ra khỏi chữ
-    .replace(/[\u0300-\u036f]/g, '')         // xóa tất cả dấu
-    .replace(/đ/g, 'd').replace(/Đ/g, 'd')  // xử lý đặc biệt chữ đ
-    .toLowerCase()
-    .trim();
-}
-
+/* ══════════════════════════════════════════════
+   SEARCH
+══════════════════════════════════════════════ */
 function handleSearch(query) {
-  const raw  = (query || '').trim();
-  const norm = normalize(raw);
-
-  // Sync cả 2 ô search
+  query = (query || '').trim().toLowerCase();
   const sd = document.getElementById('search-desktop');
   const sm = document.getElementById('search-mobile');
-  if (sd && sd.value !== raw) sd.value = raw;
-  if (sm && sm.value !== raw) sm.value = raw;
-
-  // Tự chuyển sang trang shop
-  if (raw) {
+  if (sd && sd.value.toLowerCase() !== query) sd.value = query;
+  if (sm && sm.value.toLowerCase() !== query) sm.value = query;
+  if (query) {
     const ap = document.querySelector('.page.active');
     if (ap && ap.id !== 'shop') navTo('shop');
   }
-
-  const filtered = raw
+  const filtered = query
     ? products.filter(p =>
-        normalize(p.name).includes(norm) ||
-        normalize(p.desc).includes(norm)
-      )
+        (p.name || '').toLowerCase().includes(query) ||
+        (p.desc || '').toLowerCase().includes(query))
     : products;
-
-  renderProductList(filtered, raw);
+  renderProductList(filtered, query);
 }
 
-/* ═══════════════════════════════════════
+/* ══════════════════════════════════════════════
    SHOP
-═══════════════════════════════════════ */
+══════════════════════════════════════════════ */
 function renderShop() {
-  // Desktop sidebar
-  document.getElementById('cat-list').innerHTML =
+  const desktopHtml =
     `<button class="cat-btn active" onclick="filterCat('all',this)">Tất cả</button>` +
     categories.map(c =>
       `<button class="cat-btn" onclick="filterCat('${c.key}',this)">${c.name}</button>`
     ).join('');
+  document.getElementById('cat-list').innerHTML = desktopHtml;
 
-  // Mobile pill bar
-  document.getElementById('mob-cat-scroll').innerHTML =
+  const mobileHtml =
     `<button class="mob-cat-pill active" onclick="filterCat('all',this)">Tất cả</button>` +
     categories.map(c =>
       `<button class="mob-cat-pill" onclick="filterCat('${c.key}',this)">${c.name}</button>`
     ).join('');
+  document.getElementById('mob-cat-scroll').innerHTML = mobileHtml;
 
   renderProductList(products);
 }
 
 function filterCat(key, el) {
-  // Sync desktop sidebar
-  document.querySelectorAll('.cat-btn').forEach(b => b.classList.remove('active'));
-  // Sync mobile pill bar
-  document.querySelectorAll('.mob-cat-pill').forEach(b => b.classList.remove('active'));
-  // Mark the clicked button active (works for both classes)
-  el.classList.add('active');
-  // Mirror active to the sibling bar
-  const isMob = el.classList.contains('mob-cat-pill');
-  const siblings = isMob
-    ? document.querySelectorAll('.cat-btn')
-    : document.querySelectorAll('.mob-cat-pill');
-  // Find matching button by text content
-  siblings.forEach(b => { if (b.textContent.trim() === el.textContent.trim()) b.classList.add('active'); });
-
+  // Deactivate cả desktop lẫn mobile buttons
+  document.querySelectorAll('.cat-btn, .mob-cat-pill').forEach(b => b.classList.remove('active'));
+  // Activate tất cả buttons có cùng text
+  document.querySelectorAll('.cat-btn, .mob-cat-pill').forEach(b => {
+    if (b.textContent.trim() === el.textContent.trim()) b.classList.add('active');
+  });
   renderProductList(key === 'all' ? products : products.filter(p => p.cat === key));
 }
 
+/* ══════════════════════════════════════════════
+   RENDER PRODUCTS — thumbnail + out-of-stock
+══════════════════════════════════════════════ */
 function renderProductList(list, query) {
   const grid = document.getElementById('prod-grid');
   if (!list.length) {
@@ -976,23 +896,34 @@ function renderProductList(list, query) {
              : 'Chưa có sản phẩm trong mục này.'}</div>`;
     return;
   }
+
   grid.innerHTML = list.map(p => {
-    const thumb = p.images?.length
-      ? `<img src="${p.images[0]}" alt="${p.name}" loading="lazy"
+    const isOut   = p.status === 'Out Stock';
+    const thumbUrl = makeThumb(p.images?.[0]);
+    const thumb    = thumbUrl
+      ? `<img src="${thumbUrl}" alt="${p.name}" loading="lazy"
               onerror="this.parentNode.innerHTML='<span class=p-placeholder>🏎️</span>'">`
       : `<span class="p-placeholder">🏎️</span>`;
+
+    const priceHtml = isOut
+      ? `<span class="price-out">Hết hàng</span>`
+      : `${Number(p.price).toLocaleString()}₫`;
+
     return `
       <div class="product-card" onclick="openDetail('${p.id}')">
-        <div class="p-img">${thumb}</div>
+        <div class="p-img${isOut ? ' is-out' : ''}">
+          ${isOut ? '<span class="out-badge">Hết hàng</span>' : ''}
+          ${thumb}
+        </div>
         <div class="p-name">${p.name}</div>
-        <div class="p-price">${Number(p.price).toLocaleString()}₫</div>
+        <div class="p-price">${priceHtml}</div>
       </div>`;
   }).join('');
 }
 
-/* ═══════════════════════════════════════
+/* ══════════════════════════════════════════════
    VIDEOS
-═══════════════════════════════════════ */
+══════════════════════════════════════════════ */
 function renderVideos() {
   const grid = document.getElementById('video-grid');
   if (!videosData?.length) {
@@ -1022,23 +953,35 @@ function renderVideos() {
   }).join('');
 }
 
-/* ═══════════════════════════════════════
-   PRODUCT MODAL
-═══════════════════════════════════════ */
+/* ══════════════════════════════════════════════
+   MODAL — dùng full images (từ cache riêng hoặc từ data gốc)
+══════════════════════════════════════════════ */
 function openDetail(id) {
-  // Ưu tiên lấy full product (có đủ images[]) từ full cache
-  const p = getFullProduct(id) || products.find(x => String(x.id) === String(id));
+  const p = products.find(x => String(x.id) === String(id));
   if (!p) return;
-  const imgs = p.images?.length ? p.images : [];
-  const mainHtml = imgs.length
-    ? `<img id="main-view" src="${imgs[0]}" alt="${p.name}"
+
+  /* Lấy full images: thử cache riêng trước, fallback về p.images */
+  const fullImgs = loadFullImages(id) || p.images || [];
+  const isOut    = p.status === 'Out Stock';
+
+  const mainHtml = fullImgs.length
+    ? `<img id="main-view" src="${fullImgs[0]}" alt="${p.name}"
             onerror="this.parentNode.innerHTML='<span style=font-size:64px;width:100%;height:100%;display:flex;align-items:center;justify-content:center>🏎️</span>'">`
     : `<span style="font-size:64px;width:100%;height:100%;display:flex;align-items:center;justify-content:center">🏎️</span>`;
-  const thumbHtml = imgs.length > 1
-    ? `<div class="thumbs">${imgs.map((src, i) =>
+
+  const thumbHtml = fullImgs.length > 1
+    ? `<div class="thumbs">${fullImgs.map((src, i) =>
         `<div class="thumb ${i===0?'active':''}" onclick="changeImg(this,'${src}')">
            <img src="${src}" loading="lazy"></div>`
       ).join('')}</div>` : '';
+
+  const priceHtml = isOut
+    ? `<div class="modal-price out">⛔ Tạm hết hàng</div>`
+    : `<div class="modal-price">${Number(p.price).toLocaleString()}₫</div>`;
+
+  const btnHtml = isOut
+    ? `<button class="btn btn-full btn-out" disabled>TẠM HẾT HÀNG</button>`
+    : `<button class="btn btn-full" onclick="addToCart('${p.id}')">THÊM VÀO GIỎ HÀNG</button>`;
 
   document.getElementById('modal-box').innerHTML = `
     <div class="modal-left">
@@ -1048,10 +991,10 @@ function openDetail(id) {
     <div class="modal-right">
       <div class="modal-badge">1:64 SCALE ARTISAN</div>
       <h1 class="modal-name">${p.name}</h1>
-      <div class="modal-price">${Number(p.price).toLocaleString()}₫</div>
+      ${priceHtml}
       <p class="modal-desc">${p.desc || ''}</p>
       ${p.extra ? `<div style="font-size:13px;color:var(--gray-light);line-height:1.7;margin-bottom:20px">${p.extra}</div>` : ''}
-      <button class="btn btn-full" onclick="addToCart('${p.id}')">THÊM VÀO GIỎ HÀNG</button>
+      ${btnHtml}
     </div>`;
 
   document.getElementById('modal').classList.add('open');
@@ -1073,9 +1016,9 @@ function closeModal() {
 document.getElementById('modal').addEventListener('click', e => { if (e.target === e.currentTarget) closeModal(); });
 document.addEventListener('keydown', e => { if (e.key === 'Escape') { closeModal(); closeMenu(); } });
 
-/* ═══════════════════════════════════════
+/* ══════════════════════════════════════════════
    CART
-═══════════════════════════════════════ */
+══════════════════════════════════════════════ */
 function toggleCart() {
   const open = document.getElementById('cart-drawer').classList.toggle('open');
   document.getElementById('cart-overlay').classList.toggle('open', open);
@@ -1087,7 +1030,7 @@ addSound.volume = 0.25;
 
 function addToCart(id) {
   const p = products.find(x => String(x.id) === String(id));
-  if (!p) return;
+  if (!p || p.status === 'Out Stock') return; // chặn thêm hàng khi hết
   const exists = cart.find(x => String(x.id) === String(id));
   if (exists) exists.qty++; else cart.push({ ...p, qty: 1 });
   saveCart(); renderCart(); closeModal(); showToast();
@@ -1110,10 +1053,9 @@ function renderCart() {
     list.innerHTML = `<div class="cart-empty-msg"><div style="font-size:36px">🛒</div><p>Giỏ hàng trống</p></div>`;
   } else {
     list.innerHTML = cart.map(item => {
-      total += Number(item.price) * item.qty;
-      count += item.qty;
-      const thumb = item.images?.length
-        ? `<img src="${item.images[0]}" alt="${item.name}" onerror="this.style.display='none'">` : '🏎️';
+      total += Number(item.price) * item.qty; count += item.qty;
+      const thumb = item.images?.[0]
+        ? `<img src="${makeThumb(item.images[0])}" alt="${item.name}" onerror="this.style.display='none'">` : '🏎️';
       return `
         <div class="cart-item">
           <div class="cart-item-img">${thumb}</div>
@@ -1152,9 +1094,9 @@ async function checkout() {
   window.open(`https://zalo.me/${ZALO_NUMBER}`, '_blank');
 }
 
-/* ═══════════════════════════════════════
+/* ══════════════════════════════════════════════
    AUTH / ADMIN
-═══════════════════════════════════════ */
+══════════════════════════════════════════════ */
 function openLogin()  { document.getElementById('login-overlay').classList.add('open'); }
 function closeLogin() { document.getElementById('login-overlay').classList.remove('open'); }
 
@@ -1162,41 +1104,36 @@ function checkAuth() {
   const pw = document.getElementById('admin-token').value.trim();
   if (!pw) { alert('Vui lòng nhập mật khẩu!'); return; }
   token = pw;
-
-  // Show admin links (desktop & mobile), hide login links
   document.getElementById('nav-admin').classList.remove('hide');
   document.getElementById('mob-nav-admin').classList.remove('hide');
   document.getElementById('btn-login').classList.add('hide');
   document.getElementById('mob-btn-login').classList.add('hide');
-
   document.getElementById('edit-title').value = document.getElementById('h-title').textContent || '';
   document.getElementById('edit-desc').value  = document.getElementById('h-desc').textContent  || '';
-
   closeLogin();
   navTo('admin', document.getElementById('nav-admin'));
 }
 
 async function saveAdmin(e) {
-  const btn = e.currentTarget;
-  const orig = btn.textContent;
+  const btn = e.currentTarget; const orig = btn.textContent;
   btn.textContent = 'Đang lưu...'; btn.disabled = true;
-  const payload = {
-    token, action: 'save_home',
+  const payload = { token, action: 'save_home',
     title: document.getElementById('edit-title').value,
-    desc:  document.getElementById('edit-desc').value
-  };
+    desc:  document.getElementById('edit-desc').value };
   try {
-    const res    = await fetch(API, { method: 'POST', body: JSON.stringify(payload) });
+    const res = await fetch(API, { method: 'POST', body: JSON.stringify(payload) });
     const result = await res.json();
-    if (result.status === 'success') { alert('✅ Cập nhật thành công!'); location.reload(); }
-    else alert('❌ Lỗi bảo mật: ' + result.message);
+    if (result.status === 'success') {
+      localStorage.removeItem(CACHE_KEY); // xóa cache để force refresh
+      alert('✅ Cập nhật thành công!'); location.reload();
+    } else alert('❌ Lỗi bảo mật: ' + result.message);
   } catch { alert('❌ Không thể kết nối. Thử lại sau.'); }
   finally { btn.textContent = orig; btn.disabled = false; }
 }
 
-/* ═══════════════════════════════════════
+/* ══════════════════════════════════════════════
    BOOT
-═══════════════════════════════════════ */
+══════════════════════════════════════════════ */
 init();
 </script>
 </body>
